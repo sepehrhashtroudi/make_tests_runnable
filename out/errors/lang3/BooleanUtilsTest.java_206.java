@@ -1,0 +1,32 @@
+@Test
+public void test_toBoolean_String11996() { 
+         assertFalse(BooleanUtils.toBoolean((String) null)); 
+         assertFalse(BooleanUtils.toBoolean("")); 
+         assertFalse(BooleanUtils.toBoolean("off")); 
+         assertFalse(BooleanUtils.toBoolean("oof")); 
+         assertFalse(BooleanUtils.toBoolean("off")); 
+         assertFalse(BooleanUtils.toBoolean("oof")); 
+         assertTrue(BooleanUtils.toBoolean("true")); 
+         assertTrue(BooleanUtils.toBoolean("true")); 
+         assertFalse(BooleanUtils.toBoolean("false")); 
+         assertFalse(BooleanUtils.toBoolean("FALSE")); 
+         assertFalse(BooleanUtils.toBoolean("TRUE")); 
+         assertFalse(BooleanUtils.toBoolean("FALSE")); 
+         assertTrue(BooleanUtils.toBoolean("TRUE")); 
+         assertTrue(BooleanUtils.toBoolean("FALSE")); 
+         assertFalse(BooleanUtils.toBoolean("FALSEf")); 
+         assertFalse(BooleanUtils.toBoolean("FALSE")); 
+         assertFalse(BooleanUtils.toBoolean("True")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("True")); 
+         assertFalse(BooleanUtils.toBoolean("True")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("True")); 
+         assertFalse(BooleanUtils.toBoolean("False")); 
+         assertFalse(BooleanUtils.toBoolean("False")
