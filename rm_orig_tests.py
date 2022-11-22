@@ -2,6 +2,7 @@ from tree_sitter import Language, Parser
 import os
 import copy
 import shutil
+import sys
 from pathlib import Path
 root = './model_predictions/'
 
@@ -113,34 +114,62 @@ def get_tc_lists(gen_test_path, after_rm, inject_point, curdir, file):
     # check every TCs if they are sytactically correct
     correct_tcs = []
     for i, test_code in enumerate(test_code_lists):
-        # if i != 14:
-        #     continue
         temp = copy.deepcopy(after_rm)
+        test_code = test_code.strip()
+        if test_code.endswith(';'):
+            test_code += '\n}\n' 
         temp.insert(inject_point, test_code)
         full_code = '\n'.join(temp)
         tree = parser.parse(bytes(full_code, 'utf8'))
         root_node = tree.root_node
         # print(root_node.sexp())
         if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
-            os.makedirs(f'out/errors/{curdir}/', exist_ok=True)
-            with open(f'out/errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+            os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
+            with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
                 error_f.write(test_code)
         else:
             correct_tcs.append(test_code)
 
+
+    if os.path.exists('tmp/'):
+        shutil.rmtree('tmp/')
+    os.system('defects4j checkout -p Lang -v 1f -w tmp')
+    dr_split = curdir.split('d4j_projects/Lang/')
+    compilable_tcs = []
+    for i, test_code in enumerate(correct_tcs):
+        temp = copy.deepcopy(after_rm)
+        temp.insert(inject_point, test_code)
+        full_code = '\n'.join(temp)
+        with open(f'tmp/{dr_split[1]}/{file}', 'w') as f:
+            f.write(full_code)
+        out = os.system(f'cd tmp && defects4j compile')
+        if out == 0:
+            compilable_tcs.append(test_code)
+        else:
+            os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
+            with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+                error_f.write(test_code)
+    shutil.rmtree("tmp/")
     return correct_tcs
 
 
 # function that deletes original tests from defects4j project and
 # replaces with the ones that are generated from the deep learning model
-def replace_tests():
+def replace_tests(separate, project_name):
     # traverses the defects4j file
-    for curdir, _, files in sorted(os.walk('lang3')):
+    # @sepehr for full automation, you need to match the dir structure of runnable_test to something common
+    # something like project_name/src/test/* or just using the root of the project 
+    for curdir, _, files in sorted(os.walk(f'd4j_projects/{project_name}/src/test/java/org/apache/commons/lang3')):
         # iterate java files
         for file in sorted(files):
             if file.endswith('.java'):
+                dir_splt = curdir.split('lang3/')
+                if len(dir_splt) > 1:
+                    dr = 'lang3/'+ dir_splt[1]
+                else:
+                    dr = 'lang3'
                 gen_test_path = os.path.join(
-                    'out/runnable_tests', curdir, file)
+                    'out/runnable_tests', dr, file)
                 cur_file_path = os.path.join(curdir, file)
                 print(cur_file_path)
 
@@ -150,7 +179,7 @@ def replace_tests():
 
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
-                    # print(gen_test_path, 'does not exist')
+                    print(gen_test_path, 'does not exist')
                     continue
 
                 # remove methods with '@Test'
@@ -166,18 +195,30 @@ def replace_tests():
 
                 after_rm.insert(inject_point, '\n'.join(correct_tcs))
 
-                os.makedirs(f'out/combined/{curdir}/', exist_ok=True)
-                with open(f'out/combined/{curdir}/{file}', 'w') as file_w:
-                    for line in after_rm:
-                        file_w.write(line)
-                        file_w.write('\n')
-        #         break
-        # break
+                # for saving file separately
+                if separate:
+                    os.makedirs(f'out/combined/{curdir}/', exist_ok=True)
+                    with open(f'out/combined/{curdir}/{file}', 'w') as file_w:
+                        for line in after_rm:
+                            file_w.write(line)
+                            file_w.write('\n')
+                else:
+                    with open(cur_file_path, 'w') as file_w:
+                        for line in after_rm:
+                            file_w.write(line)
+                            file_w.write('\n')
 
 
 if __name__ == "__main__":
-    if os.path.exists("out/errors/"):
-        shutil.rmtree("out/errors/")
+    if os.path.exists("out/parse_errors/"):
+        shutil.rmtree("out/parse_errors/")
+    if os.path.exists("out/compilation_errors/"):
+        shutil.rmtree("out/compilation_errors/")
     if os.path.exists("out/combined/"):
         shutil.rmtree("out/combined/")
-    replace_tests()
+        
+    # pass project name in the argument e.g. Lang
+    project_name = sys.argv[1] if sys.argv[1] else 'Lang'
+    if not os.path.exists(f'd4j_projects/{project_name}'):
+        os.system(f'defects4j checkout -p Lang -v 1f -w defects4j_projects/{project_name}')
+    replace_tests(separate=True, project_name=project_name)
