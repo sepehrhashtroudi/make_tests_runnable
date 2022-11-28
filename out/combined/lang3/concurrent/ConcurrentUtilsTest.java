@@ -652,26 +652,6 @@ public void testHandleCauseChecked9246() {
 public void testInitializeUncheckedNull9305() { 
      assertNull("Got a result", ConcurrentUtils.initializeUnchecked(null)); 
  }
-@Test
-public void testExtractCauseChecked11083() { 
-         final Exception ex = new Exception("Test"); 
-         try { 
-             ConcurrentUtils.extractCauseChecked(new ExecutionException(ex)); 
-             fail("ConcurrentRuntimeException not thrown!"); 
-         } catch (final ConcurrentRuntimeException cex) { 
-             assertEquals("Wrong cause", ex, cex.getCause()); 
-         } 
-     }
-@Test
-public void testExtractCauseChecked11089() { 
-         final Exception ex = new Exception("Test"); 
-         try { 
-             ConcurrentUtils.extractCauseChecked(new ExecutionException(ex)); 
-             fail("ConcurrentRuntimeException not thrown!"); 
-         } catch (final ConcurrentRuntimeException cex) { 
-             assertEquals("Wrong cause", ex, cex.getCause()); 
-         } 
-     }
      * Tests extractCause() if the cause is a checked exception.
      */
     

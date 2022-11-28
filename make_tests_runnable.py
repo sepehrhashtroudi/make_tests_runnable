@@ -5,12 +5,12 @@ root = './model_predictions/'
 # gold = "test_0.gold"
 # out = "test_best-bleu.output"
 # info = "test_info.txt"
-# out = "train.tests"
-# info = "train_info.txt"
+out = "train.tests"
+info = "train_info.txt"
 # out = "test.tests"
 # info = "test_info.txt"
-out = "concat.tests"
-info = "concat_info.txt"
+# out = "concat.tests"
+# info = "concat_info.txt"
 
 def prepare():
 

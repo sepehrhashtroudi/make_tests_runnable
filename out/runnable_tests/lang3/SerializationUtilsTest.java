@@ -916,16 +916,3 @@
      assertTrue(iInteger != testMap.get("BAR")); 
      assertEquals(iMap, testMap); 
  } 
-@Test 
-     public void testDeserializeBytesOfNull9686() throws Exception { 
-         final ByteArrayOutputStream streamReal = new ByteArrayOutputStream(); 
-         final ObjectOutputStream oos = new ObjectOutputStream(streamReal); 
-         oos.writeObject(null); 
-         oos.flush(); 
-         oos.close(); 
-  
-         final Object test = SerializationUtils.deserialize(streamReal.toByteArray()); 
-         assertNull(test); 
-     } 
-  
-

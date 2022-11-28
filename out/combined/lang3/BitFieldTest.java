@@ -676,15 +676,6 @@ public void testSetShortValue9083() {
      } 
      assertEquals(bf_single.setShortValue((short) 0x4000, (short) 2), (short) 0); 
  }
-@Test
-public void testSetShortValue12584() { 
-         assertEquals(bf_multi.setShortValue((short) 0), bf_multi.setShortValue((short) 0, (short) 0)); 
-         assertEquals(bf_single.setShortValue((short) 0), bf_single.setShortValue((short) 0, (short) 0)); 
-         assertEquals(bf_zero.setShortValue((short) 0), bf_zero.setShortValue((short) 0, (short) 0)); 
-         assertEquals(bf_multi.clearShortValue((short) 0), bf_multi.setShortValue((short) 0, (short) 0)); 
-         assertEquals(bf_single.clearShortValue((short) 1), bf_single.setShortValue((short) 1, (short) 0)); 
-         assertEquals(bf_zero.clearShortValue((short) 0), bf_zero.setShortValue((short) 0, (short) 0)); 
-     }
     
 
     /**

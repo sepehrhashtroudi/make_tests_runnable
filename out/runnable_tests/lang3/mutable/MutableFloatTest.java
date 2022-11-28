@@ -433,21 +433,3 @@
      mutNum = new MutableFloat(Float.NEGATIVE_INFINITY); 
      assertTrue(mutNum.isInfinite()); 
  } 
-@Test 
-     public void testAddValuePrimitive9640() { 
-         final MutableFloat mutNum = new MutableFloat(1); 
-         mutNum.add(1); 
-          
-         assertEquals(2.0f, mutNum.floatValue(), 0.01f); 
-     } 
-  
-
-@Test 
-     public void testAddValuePrimitive11604() { 
-         final MutableFloat mutNum = new MutableFloat(1); 
-         mutNum.add(1); 
-          
-         assertEquals(2.0f, mutNum.floatValue(), 0.01f); 
-     } 
-  
-
