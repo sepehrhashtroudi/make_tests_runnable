@@ -218,7 +218,7 @@ if __name__ == "__main__":
         shutil.rmtree("out/combined/")
         
     # pass project name in the argument e.g. Lang
-    project_name = sys.argv[1] if sys.argv[1] else 'Lang'
+    project_name = 'Lang'
     if not os.path.exists(f'd4j_projects/{project_name}'):
         os.system(f'defects4j checkout -p Lang -v 1f -w defects4j_projects/{project_name}')
     replace_tests(separate=True, project_name=project_name)
