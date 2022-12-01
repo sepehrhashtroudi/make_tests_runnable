@@ -220,5 +220,5 @@ if __name__ == "__main__":
     # pass project name in the argument e.g. Lang
     project_name = 'Lang'
     if not os.path.exists(f'd4j_projects/{project_name}'):
-        os.system(f'defects4j checkout -p Lang -v 1f -w defects4j_projects/{project_name}')
+        os.system(f'defects4j checkout -p Lang -v 1f -w d4j_projects/{project_name}')
     replace_tests(separate=True, project_name=project_name)
