@@ -181,7 +181,7 @@ def replace_tests(separate, project_name):
                     dr = 'lang3/' + dir_splt[1]
                 else:
                     dr = 'lang3'
-                gen_test_path = os.path.join('out/runnable_tests', dr, file)
+                gen_test_path = os.path.join('out/runnable_tests/org/apache/commons/', dr, file)
                 cur_file_path = os.path.join(curdir, file)
                 print(cur_file_path)
 
