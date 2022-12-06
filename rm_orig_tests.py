@@ -141,25 +141,25 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
             parsable_tcs.append(test_code)
             
     # check parsable TCs if they are compilable
-    # compilable_tcs = []
-    # for i, test_code in enumerate(parsable_tcs):
-    #     temp = copy.deepcopy(after_rm)
-    #     temp.insert(inject_point, test_code)
-    #     full_code = '\n'.join(temp)
-    #     with open(f'tmp/{curdir}/{file}', 'w') as f:
-    #         f.write(full_code)
-    #     out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
-    #     if out == 0:
-    #         compilable_tcs.append(test_code)
-    #     else:
-    #         os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
-    #         with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
-    #             error_f.write(test_code)
-    #         with open(f'tmp/{curdir}/{file}', 'w') as f:
-    #             f.write('\n'.join(after_rm))
-    #         not_compilable_tcs += 1
+    compilable_tcs = []
+    for i, test_code in enumerate(parsable_tcs):
+        temp = copy.deepcopy(after_rm)
+        temp.insert(inject_point, test_code)
+        full_code = '\n'.join(temp)
+        with open(f'tmp/{curdir}/{file}', 'w') as f:
+            f.write(full_code)
+        out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
+        if out == 0:
+            compilable_tcs.append(test_code)
+        else:
+            os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
+            with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+                error_f.write(test_code)
+            with open(f'tmp/{curdir}/{file}', 'w') as f:
+                f.write('\n'.join(after_rm))
+            not_compilable_tcs += 1
 
-    return parsable_tcs
+    return compilable_tcs
 
 
 # function that deletes original tests from defects4j project
