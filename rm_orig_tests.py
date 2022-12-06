@@ -2,9 +2,8 @@ from tree_sitter import Language, Parser
 import os
 import copy
 import shutil
-import sys
 from pathlib import Path
-root = './model_predictions/'
+
 
 
 # prepare tree-sitter parser
@@ -12,9 +11,7 @@ Language.build_library(
     'build/my-java.so',
     ['vendor/tree-sitter-java']
 )
-
 JAVA_LANGUAGE = Language('build/my-java.so', 'java')
-
 JAVA_PATTERNS = {
     'METHOD_SIGNATURE': '''
     (method_declaration
@@ -57,7 +54,10 @@ JAVA_PATTERNS = {
 
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
-
+project_name = 'Lang'
+total_gen_tcs = 0
+not_parsable_tcs = 0
+not_compilable_tcs = 0
 
 # getting the blob from the parse tree
 def get_blob(code, node):
@@ -92,11 +92,11 @@ def rm_orig_tests(code):
     return after_rm, inject_point
 
 
-def get_tc_lists(gen_test_path, after_rm, inject_point, curdir, file):
+def get_tc_lists(gen_test_path):
     # read the file with the generated tc to a list.
     with open(gen_test_path, 'r') as test_f:
         test_code = test_f.read()
-        test_code_lists = test_code.split('@Test')
+    test_code_lists = test_code.split('@Test')
 
     # remove empty lines
     for line in test_code_lists:
@@ -111,13 +111,22 @@ def get_tc_lists(gen_test_path, after_rm, inject_point, curdir, file):
         else:
             test_code_lists[i] = '@Test\n' + test_code_lists[i]
 
-    # check every TCs if they are sytactically correct
-    correct_tcs = []
-    for i, test_code in enumerate(test_code_lists):
+    return test_code_lists
+
+
+def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
+    global total_gen_tcs
+    global not_parsable_tcs
+    global not_compilable_tcs
+
+    total_gen_tcs+= len(gen_tests)
+    # check every TCs if they are sytactically correct or parsable
+    parsable_tcs = []
+    for i, test_code in enumerate(gen_tests):
         temp = copy.deepcopy(after_rm)
         test_code = test_code.strip()
         if test_code.endswith(';'):
-            test_code += '\n}\n' 
+            test_code += '\n}\n'
         temp.insert(inject_point, test_code)
         full_code = '\n'.join(temp)
         tree = parser.parse(bytes(full_code, 'utf8'))
@@ -127,49 +136,52 @@ def get_tc_lists(gen_test_path, after_rm, inject_point, curdir, file):
             os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
             with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
                 error_f.write(test_code)
+            not_parsable_tcs += 1
         else:
-            correct_tcs.append(test_code)
-
-
-    if os.path.exists('tmp/'):
-        shutil.rmtree('tmp/')
-    os.system('defects4j checkout -p Lang -v 1f -w tmp')
-    dr_split = curdir.split('d4j_projects/Lang/')
+            parsable_tcs.append(test_code)
+            
+    # check parsable TCs if they are compilable
     compilable_tcs = []
-    for i, test_code in enumerate(correct_tcs):
+    for i, test_code in enumerate(parsable_tcs):
         temp = copy.deepcopy(after_rm)
         temp.insert(inject_point, test_code)
         full_code = '\n'.join(temp)
-        with open(f'tmp/{dr_split[1]}/{file}', 'w') as f:
+        with open(f'tmp/{curdir}/{file}', 'w') as f:
             f.write(full_code)
-        out = os.system(f'cd tmp && defects4j compile')
+        out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
         if out == 0:
             compilable_tcs.append(test_code)
         else:
             os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
             with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
                 error_f.write(test_code)
-    shutil.rmtree("tmp/")
-    return correct_tcs
+            with open(f'tmp/{curdir}/{file}', 'w') as f:
+                f.write('\n'.join(after_rm))
+            not_compilable_tcs += 1
+
+    return compilable_tcs
 
 
-# function that deletes original tests from defects4j project and
-# replaces with the ones that are generated from the deep learning model
+# function that deletes original tests from defects4j project
+# and replaces with the ones that are generated from the model
 def replace_tests(separate, project_name):
+    # make new tmp dir for compilation check
+    if os.path.exists('tmp/'):
+        shutil.rmtree('tmp/')
+    os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
     # traverses the defects4j file
-    # @sepehr for full automation, you need to match the dir structure of runnable_test to something common
-    # something like project_name/src/test/* or just using the root of the project 
-    for curdir, _, files in sorted(os.walk(f'd4j_projects/{project_name}/src/test/java/org/apache/commons/lang3')):
+    for curdir, _, files in sorted(os.walk(f'defects4j_projects/{project_name}/src/test/java/org/apache/commons/lang3')):
+        # @sepehr for full automation, need to match dir (make_test_runnable and rm_orig_tests)
         # iterate java files
         for file in sorted(files):
+            # if file != 'ConversionTest.java': continue
             if file.endswith('.java'):
                 dir_splt = curdir.split('lang3/')
                 if len(dir_splt) > 1:
-                    dr = 'lang3/'+ dir_splt[1]
+                    dr = 'lang3/' + dir_splt[1]
                 else:
                     dr = 'lang3'
-                gen_test_path = os.path.join(
-                    'out/runnable_tests', dr, file)
+                gen_test_path = os.path.join('out/runnable_tests', dr, file)
                 cur_file_path = os.path.join(curdir, file)
                 print(cur_file_path)
 
@@ -179,15 +191,16 @@ def replace_tests(separate, project_name):
 
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
-                    print(gen_test_path, 'does not exist')
+                    print('Generated TCs for', gen_test_path, 'does not exist!!')
                     continue
+                else:
+                    gen_tests = get_tc_lists(gen_test_path)
 
                 # remove methods with '@Test'
                 after_rm, inject_point = rm_orig_tests(code)
 
                 # get syntactically correct tc lists from generated file
-                correct_tcs = get_tc_lists(
-                    gen_test_path, after_rm, inject_point, curdir, file)
+                correct_tcs = get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file)
 
                 # if there are no correct_tcs skip
                 if not correct_tcs:
@@ -208,6 +221,8 @@ def replace_tests(separate, project_name):
                             file_w.write(line)
                             file_w.write('\n')
 
+    shutil.rmtree("tmp/")
+
 
 if __name__ == "__main__":
     if os.path.exists("out/parse_errors/"):
@@ -216,9 +231,13 @@ if __name__ == "__main__":
         shutil.rmtree("out/compilation_errors/")
     if os.path.exists("out/combined/"):
         shutil.rmtree("out/combined/")
-        
+
     # pass project name in the argument e.g. Lang
-    project_name = 'Lang'
-    if not os.path.exists(f'd4j_projects/{project_name}'):
-        os.system(f'defects4j checkout -p Lang -v 1f -w d4j_projects/{project_name}')
+    if os.path.exists(f'defects4j_projects/{project_name}'):
+        shutil.rmtree(f'defects4j_projects/{project_name}') 
+    os.system(f'defects4j checkout -p {project_name} -v 1f -w defects4j_projects/{project_name}')
     replace_tests(separate=True, project_name=project_name)
+
+    print('\ntotal generated tests:', total_gen_tcs,
+          '\nnot parsable tests:', not_parsable_tcs,
+          '\nnot compilable tests:', not_compilable_tcs)

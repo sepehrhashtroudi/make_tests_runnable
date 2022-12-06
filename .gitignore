@@ -1,7 +1,7 @@
 # project data
-d4j_projects/
-tmp/
-out/
+defects4j_projects/*
+tmp/*
+out/*
 
 # any log files
 *log*
