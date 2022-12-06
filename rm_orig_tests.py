@@ -142,7 +142,7 @@ def get_tc_lists(gen_test_path, after_rm, inject_point, curdir, file):
         full_code = '\n'.join(temp)
         with open(f'tmp/{dr_split[1]}/{file}', 'w') as f:
             f.write(full_code)
-        out = os.system(f'cd tmp && defects4j compile')
+        out = os.system(f'cd tmp && rm -rf target && defects4j compile')
         if out == 0:
             compilable_tcs.append(test_code)
         else:
