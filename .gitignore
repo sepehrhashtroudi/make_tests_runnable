@@ -2,6 +2,7 @@
 defects4j_projects/*
 tmp/*
 out/*
-
+generated_datasets/*
+model_gen_coverage/*
 # any log files
 *log*

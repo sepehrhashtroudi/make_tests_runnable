@@ -4,7 +4,9 @@ import shutil
 root = './model_predictions/'
 
 out = "test_best-bleu.output"
-info = "test_info.txt"
+info = "lang3_test_info.txt"
+# out = "concat.tests"
+# info = "concat_info.txt"
 
 def prepare():
 
