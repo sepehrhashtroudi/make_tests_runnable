@@ -54,7 +54,16 @@ JAVA_PATTERNS = {
 
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
-project_name = 'Lang'
+# project_name = 'Csv'
+# project_name_l = 'csv/'
+# test_path = 'src/test/java/org/apache/commons/csv'
+# out_path = 'out/runnable_tests/org/apache/commons/'
+
+project_name = 'Time'
+project_name_l = 'time/'
+test_path = 'src/test/java/org/joda/time'
+out_path = 'out/runnable_tests/org/joda/'
+
 total_gen_tcs = 0
 not_parsable_tcs = 0
 not_compilable_tcs = 0
@@ -121,45 +130,45 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
 
     total_gen_tcs+= len(gen_tests)
     # check every TCs if they are sytactically correct or parsable
-    parsable_tcs = []
-    for i, test_code in enumerate(gen_tests):
-        temp = copy.deepcopy(after_rm)
-        test_code = test_code.strip()
-        if test_code.endswith(';'):
-            test_code += '\n}\n'
-        temp.insert(inject_point, test_code)
-        full_code = '\n'.join(temp)
-        tree = parser.parse(bytes(full_code, 'utf8'))
-        root_node = tree.root_node
-        # print(root_node.sexp())
-        if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
-            os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
-            with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
-                error_f.write(test_code)
-            not_parsable_tcs += 1
-        else:
-            parsable_tcs.append(test_code)
+    # parsable_tcs = []
+    # for i, test_code in enumerate(gen_tests):
+    #     temp = copy.deepcopy(after_rm)
+    #     test_code = test_code.strip()
+    #     if test_code.endswith(';'):
+    #         test_code += '\n}\n'
+    #     temp.insert(inject_point, test_code)
+    #     full_code = '\n'.join(temp)
+    #     tree = parser.parse(bytes(full_code, 'utf8'))
+    #     root_node = tree.root_node
+    #     # print(root_node.sexp())
+    #     if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
+    #         os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
+    #         with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+    #             error_f.write(test_code)
+    #         not_parsable_tcs += 1
+    #     else:
+    #         parsable_tcs.append(test_code)
             
-    # check parsable TCs if they are compilable
-    compilable_tcs = []
-    for i, test_code in enumerate(parsable_tcs):
-        temp = copy.deepcopy(after_rm)
-        temp.insert(inject_point, test_code)
-        full_code = '\n'.join(temp)
-        with open(f'tmp/{curdir}/{file}', 'w') as f:
-            f.write(full_code)
-        out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
-        if out == 0:
-            compilable_tcs.append(test_code)
-        else:
-            os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
-            with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
-                error_f.write(test_code)
-            with open(f'tmp/{curdir}/{file}', 'w') as f:
-                f.write('\n'.join(after_rm))
-            not_compilable_tcs += 1
+    # # check parsable TCs if they are compilable
+    # compilable_tcs = []
+    # for i, test_code in enumerate(parsable_tcs):
+    #     temp = copy.deepcopy(after_rm)
+    #     temp.insert(inject_point, test_code)
+    #     full_code = '\n'.join(temp)
+    #     with open(f'tmp/{curdir}/{file}', 'w') as f:
+    #         f.write(full_code)
+    #     out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
+    #     if out == 0:
+    #         compilable_tcs.append(test_code)
+    #     else:
+    #         os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
+    #         with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+    #             error_f.write(test_code)
+    #         with open(f'tmp/{curdir}/{file}', 'w') as f:
+    #             f.write('\n'.join(after_rm))
+    #         not_compilable_tcs += 1
 
-    return compilable_tcs
+    return gen_tests
 
 
 # function that deletes original tests from defects4j project
@@ -170,18 +179,18 @@ def replace_tests(separate, project_name):
         shutil.rmtree('tmp/')
     os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
     # traverses the defects4j file
-    for curdir, _, files in sorted(os.walk(f'defects4j_projects/{project_name}/src/test/java/org/apache/commons/lang3')):
+    for curdir, _, files in sorted(os.walk(f'defects4j_projects/{project_name}/'+ test_path)):
         # @sepehr for full automation, need to match dir (make_test_runnable and rm_orig_tests)
         # iterate java files
         for file in sorted(files):
             # if file != 'ConversionTest.java': continue
             if file.endswith('.java'):
-                dir_splt = curdir.split('lang3/')
+                dir_splt = curdir.split(project_name_l)
                 if len(dir_splt) > 1:
-                    dr = 'lang3/' + dir_splt[1]
+                    dr = project_name_l + dir_splt[1]
                 else:
-                    dr = 'lang3'
-                gen_test_path = os.path.join('out/runnable_tests/org/apache/commons/', dr, file)
+                    dr = project_name_l
+                gen_test_path = os.path.join(out_path, dr, file)
                 cur_file_path = os.path.join(curdir, file)
                 print(cur_file_path)
 
