@@ -5,4 +5,4 @@ out/*
 generated_datasets/*
 model_gen_coverage/*
 # any log files
-*log*
+*.txt

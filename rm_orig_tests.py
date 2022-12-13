@@ -13,7 +13,7 @@ Language.build_library(
 )
 JAVA_LANGUAGE = Language('build/my-java.so', 'java')
 JAVA_PATTERNS = {
-    'METHOD_SIGNATURE': '''
+    'sav': '''
     (method_declaration
         (modifiers) @mod
         type: (void_type) @void
@@ -29,6 +29,11 @@ JAVA_PATTERNS = {
                 type: (type_identifier)
                 name: (identifier))
             ) @param
+    ) ''',
+    
+    'METHOD_NAME': '''
+    (method_declaration
+        name: (identifier) @name
     ) ''',
 
     'METHOD_BODY': '''
@@ -72,14 +77,24 @@ def rm_orig_tests(code):
     mark_ann_captures = mark_ann_query.captures(root_node)
     ann_query = JAVA_LANGUAGE.query(JAVA_PATTERNS['ANNOTATION'])
     ann_captures = ann_query.captures(root_node)
+    
+    # get original test, with @Test annotations
     test_annotated = []
-
     for cp in mark_ann_captures:
         if get_blob(code, cp[0]) == 'Test':
             test_annotated.append(cp[0].parent.parent.parent)
     for cp in ann_captures:
         if get_blob(code, cp[0]) == 'Test':
             test_annotated.append(cp[0].parent.parent.parent)
+
+    # if nothing is annotated with @Test, check for methods with 'test'.
+    if len(test_annotated) == 0:
+        q = JAVA_LANGUAGE.query(JAVA_PATTERNS['METHOD_NAME'])
+        c = q.captures(root_node)
+        for cp in c:
+            if 'test' in get_blob(code, cp[0]).lower():
+                test_annotated.append(cp[0].parent)
+            
 
     after_rm = code
     for test_ann in sorted(test_annotated):
@@ -94,6 +109,7 @@ def rm_orig_tests(code):
 
 def get_tc_lists(gen_test_path):
     # read the file with the generated tc to a list.
+    # replace this part with the new token
     with open(gen_test_path, 'r') as test_f:
         test_code = test_f.read()
     test_code_lists = test_code.split('@Test')
@@ -104,12 +120,14 @@ def get_tc_lists(gen_test_path):
             test_code_lists.remove(line)
 
     # add the '@Test' token to te tc list
+    # remove if the generation does not have @Test in them
     for i in range(len(test_code_lists)):
         test_code_lists[i] = test_code_lists[i].strip()
         if test_code_lists[i].startswith('('):
             test_code_lists[i] = '@Test' + test_code_lists[i]
         else:
             test_code_lists[i] = '@Test\n' + test_code_lists[i]
+
 
     return test_code_lists
 
@@ -131,15 +149,25 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
         full_code = '\n'.join(temp)
         tree = parser.parse(bytes(full_code, 'utf8'))
         root_node = tree.root_node
-        # print(root_node.sexp())
         if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
-            os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
-            with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
-                error_f.write(test_code)
-            not_parsable_tcs += 1
+            # if parses fail check if rm_last_line + } helps
+            full_code = full_code.strip()
+            full_code = full_code[:full_code.rfind('\n')]
+            full_code += '}'
+            tree = parser.parse(bytes(full_code, 'utf8'))
+            root_node = tree.root_node
+            if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
+                os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
+                with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+                    error_f.write(test_code)
+                not_parsable_tcs += 1
         else:
             parsable_tcs.append(test_code)
             
+    # make new tmp dir for compilation check
+    if os.path.exists('tmp/'):
+        shutil.rmtree('tmp/')
+    os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
     # check parsable TCs if they are compilable
     compilable_tcs = []
     for i, test_code in enumerate(parsable_tcs):
@@ -158,17 +186,15 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
             with open(f'tmp/{curdir}/{file}', 'w') as f:
                 f.write('\n'.join(after_rm))
             not_compilable_tcs += 1
+    shutil.rmtree("tmp/")
 
     return compilable_tcs
 
-
+# defects4j checkout -p Time -v 1f -w defects4j_projects/Time
 # function that deletes original tests from defects4j project
 # and replaces with the ones that are generated from the model
 def replace_tests(separate, project_name):
-    # make new tmp dir for compilation check
-    if os.path.exists('tmp/'):
-        shutil.rmtree('tmp/')
-    os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
+
     # traverses the defects4j file
     for curdir, _, files in sorted(os.walk(f'defects4j_projects/{project_name}/src/test/java/org/apache/commons/lang3')):
         # @sepehr for full automation, need to match dir (make_test_runnable and rm_orig_tests)
@@ -198,7 +224,6 @@ def replace_tests(separate, project_name):
 
                 # remove methods with '@Test'
                 after_rm, inject_point = rm_orig_tests(code)
-
                 # get syntactically correct tc lists from generated file
                 correct_tcs = get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file)
 
@@ -220,8 +245,6 @@ def replace_tests(separate, project_name):
                         for line in after_rm:
                             file_w.write(line)
                             file_w.write('\n')
-
-    shutil.rmtree("tmp/")
 
 
 if __name__ == "__main__":
