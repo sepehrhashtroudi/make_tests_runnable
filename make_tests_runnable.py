@@ -1,20 +1,20 @@
 import re
 import os
 import shutil
-root = './model_predictions/'
 
-out = "test_best-bleu.output"
-info = "lang3_test_info.txt"
+
+out = "./model_predictions/time/test_best-bleu.output"
+info = "./generated_datasets/time_test_info.txt"
 # out = "concat.tests"
 # info = "concat_info.txt"
 
 def prepare():
 
-    f = open(root + "/" + out)
+    f = open(  out)
     out_lines = f.readlines()
     f.close()
 
-    f = open(root + "/" + info)
+    f = open( info)
     info_lines = f.readlines()
     f.close()
 
