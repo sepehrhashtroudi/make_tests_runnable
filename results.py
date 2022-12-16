@@ -10,7 +10,7 @@ f = open("./generated_datasets/lang3_test_info.txt")
 test_info = f.readlines()
 f.close()
 
-tree = ET.parse('model_gen_coverage/clover_real_output.xml')
+tree = ET.parse('model_gen_coverage/lang_evo.xml')
 root = tree.getroot()
 line_coverage = {}
 for package in root[0].findall('package'):
@@ -40,7 +40,7 @@ for package in root[0].findall('package'):
                 print("type: " + line.get("type"))
         # print(lines)
         if len(lines) > 0:
-            line_coverage["/".join(file.get("path").split('/')[10:])] = lines
+            line_coverage["/".join(file.get("path").split('/')[9:])] = lines
 
 
 test_line_num = 0

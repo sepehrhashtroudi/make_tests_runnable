@@ -59,15 +59,29 @@ JAVA_PATTERNS = {
 
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
+
+add_all_tests = 1
 # project_name = 'Csv'
 # project_name_l = 'csv/'
 # test_path = 'src/test/java/org/apache/commons/csv'
 # out_path = 'out/runnable_tests/org/apache/commons/'
 
-project_name = 'Time'
-project_name_l = 'time/'
-test_path = 'src/test/java/org/joda/time'
-out_path = 'out/runnable_tests/org/joda/'
+project_name = 'Lang'
+project_name_l = 'lang3/'
+test_path = 'src/test/java/org/apache/commons/lang3'
+out_path = 'out/runnable_tests/org/apache/commons/'
+
+# project_name = 'Closure'
+# project_name_l = 'google/'
+# test_path = 'test/com/google'
+# out_path = 'out/runnable_tests/com/'
+
+# project_name = 'Time'
+# project_name_l = 'time/'
+# test_path = 'src/test/java/org/joda/time'
+# out_path = 'out/runnable_tests/org/joda/'
+
+no_test_flag = 0
 
 total_gen_tcs = 0
 not_parsable_tcs = 0
@@ -80,6 +94,7 @@ def get_blob(code, node):
 
 # parse the original file and remove method with '@Test'
 def rm_orig_tests(code):
+    global no_test_flag
     tree = parser.parse(bytes(code, 'utf8'))
     root_node = tree.root_node
     mark_ann_query = JAVA_LANGUAGE.query(JAVA_PATTERNS['MARKER_ANNOTATION'])
@@ -98,11 +113,14 @@ def rm_orig_tests(code):
 
     # if nothing is annotated with @Test, check for methods with 'test'.
     if len(test_annotated) == 0:
+        no_test_flag = 1
         q = JAVA_LANGUAGE.query(JAVA_PATTERNS['METHOD_NAME'])
         c = q.captures(root_node)
         for cp in c:
             if 'test' in get_blob(code, cp[0]).lower():
                 test_annotated.append(cp[0].parent)
+    else:
+        no_test_flag = 0
             
 
     after_rm = code
@@ -130,12 +148,13 @@ def get_tc_lists(gen_test_path):
 
     # add the '@Test' token to te tc list
     # remove if the generation does not have @Test in them
-    for i in range(len(test_code_lists)):
-        test_code_lists[i] = test_code_lists[i].strip()
-        if test_code_lists[i].startswith('('):
-            test_code_lists[i] = '@Test' + test_code_lists[i]
-        else:
-            test_code_lists[i] = '@Test\n' + test_code_lists[i]
+    if no_test_flag == 0:
+        for i in range(len(test_code_lists)):
+            test_code_lists[i] = test_code_lists[i].strip()
+            if test_code_lists[i].startswith('('):
+                test_code_lists[i] = '@Test' + test_code_lists[i]
+            else:
+                test_code_lists[i] = '@Test\n' + test_code_lists[i]
 
 
     return test_code_lists
@@ -147,57 +166,60 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
     global not_compilable_tcs
 
     total_gen_tcs+= len(gen_tests)
-    # check every TCs if they are sytactically correct or parsable
-    parsable_tcs = []
-    for i, test_code in enumerate(gen_tests):
-        temp = copy.deepcopy(after_rm)
-        test_code = test_code.strip()
-        if test_code.endswith(';'):
-            test_code += '\n}\n'
-        temp.insert(inject_point, test_code)
-        full_code = '\n'.join(temp)
-        tree = parser.parse(bytes(full_code, 'utf8'))
-        root_node = tree.root_node
-        if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
-            # if parses fail check if rm_last_line + } helps
-            full_code = full_code.strip()
-            full_code = full_code[:full_code.rfind('\n')]
-            full_code += '}'
+    if add_all_tests == 1:
+        return gen_tests
+    else:
+        # # check every TCs if they are sytactically correct or parsable
+        parsable_tcs = []
+        for i, test_code in enumerate(gen_tests):
+            temp = copy.deepcopy(after_rm)
+            test_code = test_code.strip()
+            if test_code.endswith(';'):
+                test_code += '\n}\n'
+            temp.insert(inject_point, test_code)
+            full_code = '\n'.join(temp)
             tree = parser.parse(bytes(full_code, 'utf8'))
             root_node = tree.root_node
             if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
-                os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
-                with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
-                    error_f.write(test_code)
-                not_parsable_tcs += 1
-        else:
-            parsable_tcs.append(test_code)
-            
-    # make new tmp dir for compilation check
-    if os.path.exists('tmp/'):
-        shutil.rmtree('tmp/')
-    os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
-    # check parsable TCs if they are compilable
-    compilable_tcs = []
-    for i, test_code in enumerate(parsable_tcs):
-        temp = copy.deepcopy(after_rm)
-        temp.insert(inject_point, test_code)
-        full_code = '\n'.join(temp)
-        with open(f'tmp/{curdir}/{file}', 'w') as f:
-            f.write(full_code)
-        out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
-        if out == 0:
-            compilable_tcs.append(test_code)
-        else:
-            os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
-            with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
-                error_f.write(test_code)
+                # if parses fail check if rm_last_line + } helps
+                full_code = full_code.strip()
+                full_code = full_code[:full_code.rfind('\n')]
+                full_code += '}'
+                tree = parser.parse(bytes(full_code, 'utf8'))
+                root_node = tree.root_node
+                if 'ERROR' in root_node.sexp() or 'MISSING' in root_node.sexp():
+                    os.makedirs(f'out/parse_errors/{curdir}/', exist_ok=True)
+                    with open(f'out/parse_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+                        error_f.write(test_code)
+                    not_parsable_tcs += 1
+            else:
+                parsable_tcs.append(test_code)
+                
+        # make new tmp dir for compilation check
+        if os.path.exists('tmp/'):
+            shutil.rmtree('tmp/')
+        os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
+        # check parsable TCs if they are compilable
+        compilable_tcs = []
+        for i, test_code in enumerate(parsable_tcs):
+            temp = copy.deepcopy(after_rm)
+            temp.insert(inject_point, test_code)
+            full_code = '\n'.join(temp)
             with open(f'tmp/{curdir}/{file}', 'w') as f:
-                f.write('\n'.join(after_rm))
-            not_compilable_tcs += 1
-    shutil.rmtree("tmp/")
+                f.write(full_code)
+            out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
+            if out == 0:
+                compilable_tcs.append(test_code)
+            else:
+                os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
+                with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
+                    error_f.write(test_code)
+                with open(f'tmp/{curdir}/{file}', 'w') as f:
+                    f.write('\n'.join(after_rm))
+                not_compilable_tcs += 1
+        shutil.rmtree("tmp/")
 
-    return gen_tests
+        return compilable_tcs
 
 # defects4j checkout -p Time -v 1f -w defects4j_projects/Time
 # function that deletes original tests from defects4j project
@@ -229,10 +251,12 @@ def replace_tests(separate, project_name):
                     print('Generated TCs for', gen_test_path, 'does not exist!!')
                     continue
                 else:
+                    # remove methods with '@Test'
+                    after_rm, inject_point = rm_orig_tests(code)
                     gen_tests = get_tc_lists(gen_test_path)
 
-                # remove methods with '@Test'
-                after_rm, inject_point = rm_orig_tests(code)
+                
+                
                 # get syntactically correct tc lists from generated file
                 correct_tcs = get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file)
 

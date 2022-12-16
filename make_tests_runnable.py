@@ -2,9 +2,10 @@ import re
 import os
 import shutil
 
-
-out = "./model_predictions/time/test_best-bleu.output"
-info = "./generated_datasets/time_test_info.txt"
+out = "./generated_datasets/lang3_test.tests"
+info = "./generated_datasets/lang3_test_info.txt"
+# out = "./model_predictions/csv/test_best-bleu.output"
+# info = "./generated_datasets/csv_test_info.txt"
 # out = "concat.tests"
 # info = "concat_info.txt"
 
@@ -36,6 +37,12 @@ def prepare():
         if line not in list_of_tests:
             list_of_tests.append(line)
             line = re.sub('test\w+\(\)', replace, line)
+            if "@Test" not in line:
+                if line.startswith('('):
+                    line = '@Test' + line
+                else:
+                    line = '@Test\n' + line
+
             line = re.sub("\[EOL\]", '\n', line)
             path = info_line.split("<test_path>:")[-1].strip()
             os.makedirs(os.path.dirname("out/runnable_tests/" + path), exist_ok=True)
