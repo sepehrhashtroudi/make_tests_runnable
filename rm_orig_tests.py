@@ -225,13 +225,11 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
 # function that deletes original tests from defects4j project
 # and replaces with the ones that are generated from the model
 def replace_tests(separate, project_name):
-
     # traverses the defects4j file
     for curdir, _, files in sorted(os.walk(f'defects4j_projects/{project_name}/'+ test_path)):
         # @sepehr for full automation, need to match dir (make_test_runnable and rm_orig_tests)
         # iterate java files
         for file in sorted(files):
-            # if file != 'ConversionTest.java': continue
             if file.endswith('.java'):
                 dir_splt = curdir.split(project_name_l)
                 if len(dir_splt) > 1:
@@ -248,23 +246,21 @@ def replace_tests(separate, project_name):
 
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
-                    print('Generated TCs for', gen_test_path, 'does not exist!!')
-                    continue
+                    has_gen = False
                 else:
                     # remove methods with '@Test'
-                    after_rm, inject_point = rm_orig_tests(code)
+                    has_gen = True
                     gen_tests = get_tc_lists(gen_test_path)
 
+                after_rm, inject_point = rm_orig_tests(code)
                 
-                
-                # get syntactically correct tc lists from generated file
-                correct_tcs = get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file)
+                if has_gen:
+                    # get parsable and compilable tc lists from generated file
+                    correct_tcs = get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file)
 
-                # if there are no correct_tcs skip
-                if not correct_tcs:
-                    continue
-
-                after_rm.insert(inject_point, '\n'.join(correct_tcs))
+                    # if there are no correct_tcs, skip insertion
+                    if correct_tcs:
+                        after_rm.insert(inject_point, '\n'.join(correct_tcs))
 
                 # for saving file separately
                 if separate:
