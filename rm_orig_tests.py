@@ -247,12 +247,13 @@ def replace_tests(separate, project_name):
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
                     has_gen = False
+                    after_rm = code.splitlines()
                 else:
                     # remove methods with '@Test'
                     has_gen = True
                     gen_tests = get_tc_lists(gen_test_path)
 
-                after_rm, inject_point = rm_orig_tests(code)
+                    after_rm, inject_point = rm_orig_tests(code)
                 
                 if has_gen:
                     # get parsable and compilable tc lists from generated file
