@@ -2,8 +2,12 @@ import re
 import os
 import shutil
 
-out = "./generated_datasets/lang3_test.tests"
-info = "./generated_datasets/lang3_test_info.txt"
+# out = "./generated_datasets/lang3_test.tests"
+# info = "./generated_datasets/lang3_test_info.txt"
+# out = "./model_predictions/lang/test_best-bleu.output"
+# info = "./generated_datasets/lang3_test_info.txt"
+out = "./model_predictions/time/test_best-bleu.output"
+info = "./generated_datasets/time_test_info.txt"
 # out = "./model_predictions/csv/test_best-bleu.output"
 # info = "./generated_datasets/csv_test_info.txt"
 # out = "concat.tests"
