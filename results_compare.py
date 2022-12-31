@@ -10,7 +10,7 @@ f = open("./generated_datasets/lang3_test_info.txt")
 test_info = f.readlines()
 f.close()
 
-tree = ET.parse('model_gen_coverage/lang_train.xml')
+tree = ET.parse('model_gen_coverage/lang_evo.xml')
 root = tree.getroot()
 line_coverage_train = {}
 for package in root[0].findall('package'):
@@ -40,9 +40,9 @@ for package in root[0].findall('package'):
                 print("type: " + line.get("type"))
         # print(lines)
         if len(lines) > 0:
-            line_coverage_train["/".join(file.get("path").split('/')[10:])] = lines
+            line_coverage_train["/".join(file.get("path").split('/')[9:])] = lines
 
-tree = ET.parse('model_gen_coverage/lang_original_tests.xml')
+tree = ET.parse('model_gen_coverage/lang_manual.xml')
 root = tree.getroot()
 line_coverage_test = {}
 for package in root[0].findall('package'):
@@ -102,11 +102,11 @@ for line in test_info:
             elif file_path in line_coverage_train.keys() :
                 if line_num not in line_coverage_train[file_path] :
                      model_unique_covered_lines += 1
-print("both train and test: {}".format(common_covered_lines))
-print("covered by model: {}".format(model_covered_lines/test_line_num))
-print("covered by train and not by model: {}".format(train_covered_lines)) 
+print("both train and model: {}".format(common_covered_lines))
+print("covered by model: {}".format(model_covered_lines))
+print("covered by train : {}".format(train_covered_lines)) 
 print("covered by model and not by train: {}".format(model_unique_covered_lines)) 
-print("new covered percentage: {}".format(model_unique_covered_lines/(test_line_num-train_covered_lines)) )
+# print("new covered percentage: {}".format(model_unique_covered_lines/(test_line_num-train_covered_lines)) )
 print("all lines: {}".format(test_line_num)) 
 
 # print(out)

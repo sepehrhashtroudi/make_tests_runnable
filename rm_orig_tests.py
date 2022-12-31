@@ -30,11 +30,21 @@ JAVA_PATTERNS = {
                 name: (identifier))
             ) @param
     ) ''',
+
+    'METHOD_TYPE': '''
+    (method_declaration
+        (modifiers) @mod
+    ) ''',
+
+    'METHOD_VOID': '''
+    (method_declaration
+        (void_type) @void
+    ) ''',
     
     'METHOD_NAME': '''
     (method_declaration
-        name: (identifier) @name
-    ) ''',
+        name: (identifier)) @definition.method
+     ''',
 
     'METHOD_BODY': '''
     (method_declaration
@@ -60,26 +70,27 @@ JAVA_PATTERNS = {
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
 
-add_all_tests = 0
+
 # project_name = 'Csv'
 # project_name_l = 'csv/'
 # test_path = 'src/test/java/org/apache/commons/csv'
 # out_path = 'out/runnable_tests/org/apache/commons/'
 
-# project_name = 'Lang'
-# project_name_l = 'lang3/'
-# test_path = 'src/test/java/org/apache/commons/lang3'
-# out_path = 'out/runnable_tests/org/apache/commons/'
+project_name = 'Lang'
+project_name_l = 'lang3/'
+test_path = 'src/test/java/org/apache/commons/lang3'
+out_path = 'out/runnable_tests/org/apache/commons/'
 
 # project_name = 'Closure'
 # project_name_l = 'google/'
 # test_path = 'test/com/google'
 # out_path = 'out/runnable_tests/com/'
 
-project_name = 'Time'
-project_name_l = 'time/'
-test_path = 'src/test/java/org/joda/time'
-out_path = 'out/runnable_tests/org/joda/'
+# project_name = 'Time'
+# project_name_l = 'time/'
+# test_path = 'src/test/java/org/joda/time'
+# out_path = 'out/runnable_tests/org/joda/'
+add_all_tests = 1
 
 no_test_flag = 0
 
@@ -116,9 +127,14 @@ def rm_orig_tests(code):
         no_test_flag = 1
         q = JAVA_LANGUAGE.query(JAVA_PATTERNS['METHOD_NAME'])
         c = q.captures(root_node)
+        
+    
         for cp in c:
-            if 'test' in get_blob(code, cp[0]).lower():
-                test_annotated.append(cp[0].parent)
+            # print("code:" + get_blob(code, cp[0]))
+            # print("codetype :" + get_blob(code, cpt[0]))
+            if 'test' in get_blob(code, cp[0]).lower() and 'public void' in get_blob(code, cp[0]).lower():
+                test_annotated.append(cp[0])
+                
     else:
         no_test_flag = 0
             
