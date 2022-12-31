@@ -70,7 +70,11 @@ JAVA_PATTERNS = {
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
 
+<<<<<<< HEAD
 
+=======
+add_all_tests = 1
+>>>>>>> c477e2ccc34e8e86811fe2d4dd240c5bd1230c6a
 # project_name = 'Csv'
 # project_name_l = 'csv/'
 # test_path = 'src/test/java/org/apache/commons/csv'
@@ -90,7 +94,10 @@ out_path = 'out/runnable_tests/org/apache/commons/'
 # project_name_l = 'time/'
 # test_path = 'src/test/java/org/joda/time'
 # out_path = 'out/runnable_tests/org/joda/'
+<<<<<<< HEAD
 add_all_tests = 1
+=======
+>>>>>>> c477e2ccc34e8e86811fe2d4dd240c5bd1230c6a
 
 no_test_flag = 0
 
@@ -144,10 +151,7 @@ def rm_orig_tests(code):
         test = get_blob(code, test_ann)
         after_rm = after_rm.replace(test, '')
 
-    if len(test_annotated) != 0:
-        inject_point = test_annotated[0].start_point[0]
-    else:
-        inject_point = 0
+    inject_point = test_annotated[0].start_point[0]
     after_rm = after_rm.splitlines()
 
     return after_rm, inject_point
@@ -262,17 +266,17 @@ def replace_tests(separate, project_name):
                 # read the original defects4j file
                 with open(cur_file_path, 'r') as read_f:
                     code = read_f.read()
-                
-                after_rm, inject_point = rm_orig_tests(code)
+
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
                     has_gen = False
+                    after_rm = code.splitlines()
                 else:
                     # remove methods with '@Test'
                     has_gen = True
                     gen_tests = get_tc_lists(gen_test_path)
 
-                
+                    after_rm, inject_point = rm_orig_tests(code)
                 
                 if has_gen:
                     # get parsable and compilable tc lists from generated file
