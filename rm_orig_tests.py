@@ -70,34 +70,37 @@ JAVA_PATTERNS = {
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
 
-<<<<<<< HEAD
 
-=======
-add_all_tests = 1
->>>>>>> c477e2ccc34e8e86811fe2d4dd240c5bd1230c6a
 # project_name = 'Csv'
 # project_name_l = 'csv/'
 # test_path = 'src/test/java/org/apache/commons/csv'
 # out_path = 'out/runnable_tests/org/apache/commons/'
 
-project_name = 'Lang'
-project_name_l = 'lang3/'
-test_path = 'src/test/java/org/apache/commons/lang3'
-out_path = 'out/runnable_tests/org/apache/commons/'
+# project_name = 'Lang'
+# project_name_l = 'lang3/'
+# test_path = 'src/test/java/org/apache/commons/lang3'
+# out_path = 'out/runnable_tests/org/apache/commons/'
 
 # project_name = 'Closure'
 # project_name_l = 'google/'
 # test_path = 'test/com/google'
 # out_path = 'out/runnable_tests/com/'
 
+# project_name = 'Codec'
+# project_name_l = 'codec/'
+# test_path = 'src/test/org/apache/commons/codec'
+# out_path = 'out/runnable_tests/org/apache/commons/'
+
+project_name = 'Cli'
+project_name_l = 'cli/'
+test_path = 'src/test/org/apache/commons/cli'
+out_path = 'out/runnable_tests/'
+
 # project_name = 'Time'
 # project_name_l = 'time/'
 # test_path = 'src/test/java/org/joda/time'
 # out_path = 'out/runnable_tests/org/joda/'
-<<<<<<< HEAD
-add_all_tests = 1
-=======
->>>>>>> c477e2ccc34e8e86811fe2d4dd240c5bd1230c6a
+add_all_tests = 0
 
 no_test_flag = 0
 
@@ -151,7 +154,10 @@ def rm_orig_tests(code):
         test = get_blob(code, test_ann)
         after_rm = after_rm.replace(test, '')
 
-    inject_point = test_annotated[0].start_point[0]
+    if len(test_annotated) != 0:
+        inject_point = test_annotated[0].start_point[0]
+    else:
+        inject_point = 0
     after_rm = after_rm.splitlines()
 
     return after_rm, inject_point
@@ -220,7 +226,7 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
                 
         # make new tmp dir for compilation check
         if os.path.exists('tmp/'):
-            shutil.rmtree('tmp/')
+            shutil.rmtree('tmp/', ignore_errors=True)
         os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
         # check parsable TCs if they are compilable
         compilable_tcs = []
@@ -240,7 +246,7 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
                 with open(f'tmp/{curdir}/{file}', 'w') as f:
                     f.write('\n'.join(after_rm))
                 not_compilable_tcs += 1
-        shutil.rmtree("tmp/")
+        shutil.rmtree("tmp/", ignore_errors=True)
 
         return compilable_tcs
 
@@ -266,17 +272,17 @@ def replace_tests(separate, project_name):
                 # read the original defects4j file
                 with open(cur_file_path, 'r') as read_f:
                     code = read_f.read()
-
+                
+                after_rm, inject_point = rm_orig_tests(code)
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
                     has_gen = False
-                    after_rm = code.splitlines()
                 else:
                     # remove methods with '@Test'
                     has_gen = True
                     gen_tests = get_tc_lists(gen_test_path)
 
-                    after_rm, inject_point = rm_orig_tests(code)
+                
                 
                 if has_gen:
                     # get parsable and compilable tc lists from generated file
@@ -317,3 +323,5 @@ if __name__ == "__main__":
     print('\ntotal generated tests:', total_gen_tcs,
           '\nnot parsable tests:', not_parsable_tcs,
           '\nnot compilable tests:', not_compilable_tcs)
+
+

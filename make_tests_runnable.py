@@ -4,17 +4,32 @@ import shutil
 
 # out = "./generated_datasets/lang3_test.tests"
 # info = "./generated_datasets/lang3_test_info.txt"
-out = "./model_predictions/lang/test_best-bleu.output"
-info = "./generated_datasets/lang3_test_info.txt"
+# out = "./model_predictions/lang/test_best-bleu.output"
+# info = "./generated_datasets/lang3_test_info.txt"
 
 # out = "./generated_datasets/time_train.tests"
 # info = "./generated_datasets/time_train_info.txt"
 # out = "./model_predictions/time/test_best-bleu.output"
 # info = "./generated_datasets/time_test_info.txt"
+
 # out = "./model_predictions/closure/test_best-bleu.output"
 # info = "./generated_datasets/closure_test_info.txt"
+
 # out = "./model_predictions/csv/test_best-bleu.output"
 # info = "./generated_datasets/csv_test_info.txt"
+# out = "./generated_datasets/csv_train.tests"
+# info = "./generated_datasets/csv_train_info.txt"
+
+# out = "./model_predictions/codec/test_best-bleu.output"
+# info = "./generated_datasets/codec_test_info.txt"
+# out = "./generated_datasets/codec_train.tests"
+# info = "./generated_datasets/codec_train_info.txt"
+
+out = "./model_predictions/cli/test_best-bleu.output"
+info = "./generated_datasets/cli_test_info.txt"
+# out = "./generated_datasets/codec_train.tests"
+# info = "./generated_datasets/codec_train_info.txt"
+
 # out = "concat.tests"
 # info = "concat_info.txt"
 
