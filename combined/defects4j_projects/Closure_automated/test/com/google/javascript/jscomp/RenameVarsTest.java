@@ -99,11 +99,6 @@ public void testPseudoNamesUniqueStableRenameWithPointlesslyAnonymousFunctions11
      expectedVariableMap = makeVariableMap("L 0", "a", "L 1", "b", "L 2", "c"); 
      testRenameMapUsingOldMap("(function (v0, v1, v2) {});" + "(function (v3, v4) {});", "(function (a, b, c) {});" + "(function (a, b) {});", expectedVariableMap); 
  }
-public void testThrowError1115() { 
-     testDebugStrings("throw Error('xyz');", "throw Error('a');", (new String[] { "a", "xyz" })); 
-     previous = VariableMap.fromMap(ImmutableMap.of("previous", "xyz")); 
-     testDebugStrings("throw Error('xyz');", "throw Error('previous');", (new String[] { "previous", "xyz" })); 
- }
   
 
   

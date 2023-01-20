@@ -54,6 +54,154 @@ public class LinkedFlowScopeTest extends CompilerTypeTestCase {
     localEntry = LinkedFlowScope.createEntryLattice(localScope);
   }
 
+public void testJoin217() { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localA", STRING_TYPE); 
+     FlowScope childB = localEntry.createChildFlowScope(); 
+     childB.inferSlotType("globalB", BOOLEAN_TYPE); 
+     assertTypeEquals(STRING_TYPE, childA.getSlot("localA").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, childB.getSlot("globalB").getType()); 
+     assertNull(childB.getSlot("localB").getType()); 
+     FlowScope joined = join(childB, childA); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localA").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, joined.getSlot("globalB").getType()); 
+     joined = join(childA, childB); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localA").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, joined.getSlot("globalB").getType()); 
+     assertEquals("Join should be symmetric", join(childB, childA), join(childA, childB)); 
+ }
+public void testDiffer1142() { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localB", NUMBER_TYPE); 
+     FlowScope childAB = childA.createChildFlowScope(); 
+     childAB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childABC = childAB.createChildFlowScope(); 
+     childABC.inferSlotType("localA", BOOLEAN_TYPE); 
+     FlowScope childB = childAB.createChildFlowScope(); 
+     childB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childBC = childB.createChildFlowScope(); 
+     childBC.inferSlotType("localA", NO_TYPE); 
+     assertScopesSame(childAB, childB); 
+     assertScopesDiffer(childABC, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+ }
+public void testDiffer1143() { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localB", NUMBER_TYPE); 
+     FlowScope childAB = childA.createChildFlowScope(); 
+     childAB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childABC = childAB.createChildFlowScope(); 
+     childABC.inferSlotType("localA", BOOLEAN_TYPE); 
+     FlowScope childB = childAB.createChildFlowScope(); 
+     childB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childBC = childB.createChildFlowScope(); 
+     childBC.inferSlotType("localA", NO_TYPE); 
+     assertScopesSame(childAB, childB); 
+     assertScopesDiffer(childA, childABC); 
+     assertScopesDiffer(childA, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+ }
+public void testLongChain3144() { 
+     FlowScope chainA = localEntry.createChildFlowScope(); 
+     FlowScope chainB = localEntry.createChildFlowScope(); 
+     for (int i = 0; i < LONG_CHAIN_LENGTH * 7; i++) { 
+         if (i % 7 == 0) { 
+             int j = i / 7; 
+             localScope.declare("local" + j, null, null, null); 
+             chainA.inferSlotType("local" + j, j % 2 == 0 ? NUMBER_TYPE : BOOLEAN_TYPE); 
+             chainB.inferSlotType("local" + j, j % 3 == 0 ? STRING_TYPE : BOOLEAN_TYPE); 
+         } 
+         chainA = chainA.createChildFlowScope(); 
+         chainB = chainB.createChildFlowScope(); 
+     } 
+     verifyLongChains(chainA, chainB); 
+ }
+public void testDiffer1145() { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localB", NUMBER_TYPE); 
+     FlowScope childAB = childA.createChildFlowScope(); 
+     childAB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childABC = childAB.createChildFlowScope(); 
+     childABC.inferSlotType("localA", BOOLEAN_TYPE); 
+     FlowScope childB = childAB.createChildFlowScope(); 
+     childB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childBC = childB.createChildFlowScope(); 
+     childBC.inferSlotType("localA", NO_TYPE); 
+     assertScopesSame(childAB, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+ }
+public void testJoin2146() throws Exception { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localA", STRING_TYPE); 
+     FlowScope childB = localEntry.createChildFlowScope(); 
+     childB.inferSlotType("globalB", BOOLEAN_TYPE); 
+     assertTypeEquals(STRING_TYPE, childA.getSlot("localA").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, childB.getSlot("globalB").getType()); 
+     assertNull(childB.getSlot("localB").getType()); 
+     FlowScope joined = join(childB, childA); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localA").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, joined.getSlot("globalB").getType()); 
+     joined = join(childA, childB); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localA").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, joined.getSlot("globalB").getType()); 
+     assertEquals("Join should be symmetric", join(childB, childA), join(childA, childB)); 
+ }
+public void testJoin2148() { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childB = localEntry.createChildFlowScope(); 
+     childB.inferSlotType("localB", BOOLEAN_TYPE); 
+     assertTypeEquals(STRING_TYPE, childA.getSlot("localB").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, childB.getSlot("localB").getType()); 
+     assertNull(childB.getSlot("localB").getType()); 
+     FlowScope joined = join(childB, childA); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localB").getType()); 
+     joined = join(childA, childB); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localB").getType()); 
+     assertNull(join(childA, childB)); 
+ }
+public void testDiffer1150() { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localB", NUMBER_TYPE); 
+     FlowScope childAB = childA.createChildFlowScope(); 
+     childAB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childABC = childAB.createChildFlowScope(); 
+     childABC.inferSlotType("localA", BOOLEAN_TYPE); 
+     FlowScope childB = childAB.createChildFlowScope(); 
+     childB.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childBC = childB.createChildFlowScope(); 
+     childBC.inferSlotType("localA", NO_TYPE); 
+     assertScopesSame(childAB, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+     assertScopesDiffer(childA, childAB); 
+     assertScopesDiffer(childA, childB); 
+ }
+public void testJoin2151() throws Exception { 
+     FlowScope childA = localEntry.createChildFlowScope(); 
+     childA.inferSlotType("localB", STRING_TYPE); 
+     FlowScope childB = localEntry.createChildFlowScope(); 
+     childB.inferSlotType("globalB", BOOLEAN_TYPE); 
+     assertTypeEquals(STRING_TYPE, childA.getSlot("localB").getType()); 
+     assertTypeEquals(BOOLEAN_TYPE, childB.getSlot("globalB").getType()); 
+     assertNull(childB.getSlot("localB").getType()); 
+     FlowScope joined = join(childB, childA); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localB").getType()); 
+     joined = join(childA, childB); 
+     assertTypeEquals(STRING_TYPE, joined.getSlot("localB").getType()); 
+     assertNull(join(childA, childB)); 
+ }
   
 
   

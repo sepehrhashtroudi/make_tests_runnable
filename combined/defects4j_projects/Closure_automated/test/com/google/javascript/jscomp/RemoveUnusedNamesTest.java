@@ -54,8 +54,29 @@ public class RemoveUnusedNamesTest extends CompilerTestCase {
     canRemoveExterns = false;
   }
 
-  
 
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+
+      @Override
+      public void process(Node externs, Node root) {
+        new TypeCheck(compiler,
+                new SemanticReverseAbstractInterpreter(
+                        compiler.getCodingConvention(),
+                        compiler.getTypeRegistry()),
+                compiler.getTypeRegistry(),
+                CheckLevel.ERROR,
+                CheckLevel.ERROR).processForTesting(externs, root);
+
+        new RemoveUnusedNames(
+                compiler, canRemoveExterns).process(externs, root);
+
+        // Use to remove side-effect-free artifacts that are left over.
+        new UnreachableCodeElimination(compiler, true).process(externs, root);
+      }
+    };
+  }
   
 
   

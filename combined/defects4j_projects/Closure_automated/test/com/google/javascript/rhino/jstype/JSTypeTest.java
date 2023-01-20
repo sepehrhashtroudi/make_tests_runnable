@@ -708,7 +708,120 @@ public class JSTypeTest extends BaseJSTypeTestCase {
     verifySubtypeChain(typeChain, true);
   }
 
-  
+  public void verifySubtypeChain(List<JSType> typeChain,
+                                 boolean checkSubtyping) throws Exception {
+    // Ugh. This wouldn't require so much copy-and-paste if we had a functional
+    // programming language.
+    for (int i = 0; i < typeChain.size(); i++) {
+      for (int j = 0; j < typeChain.size(); j++) {
+        JSType typeI = typeChain.get(i);
+        JSType typeJ = typeChain.get(j);
+
+        JSType namedTypeI = getNamedWrapper("TypeI", typeI);
+        JSType namedTypeJ = getNamedWrapper("TypeJ", typeJ);
+        JSType proxyTypeI = new ProxyObjectType(registry, typeI);
+        JSType proxyTypeJ = new ProxyObjectType(registry, typeJ);
+
+        if (i == j) {
+          assertTrue(typeI + " should equal itself",
+                  typeI.isEquivalentTo(typeI));
+          assertTrue("Named " + typeI + " should equal itself",
+                  namedTypeI.isEquivalentTo(namedTypeI));
+          assertTrue("Proxy " + typeI + " should equal itself",
+                  proxyTypeI.isEquivalentTo(proxyTypeI));
+        } else {
+          assertFalse(typeI + " should not equal " + typeJ,
+                  typeI.isEquivalentTo(typeJ));
+          assertFalse("Named " + typeI + " should not equal " + typeJ,
+                  namedTypeI.isEquivalentTo(namedTypeJ));
+          assertFalse("Proxy " + typeI + " should not equal " + typeJ,
+                  proxyTypeI.isEquivalentTo(proxyTypeJ));
+        }
+
+        assertTrue(typeJ + " should be castable to " + typeI,
+                typeJ.canCastTo(typeI));
+        assertTrue(typeJ + " should be castable to Named " + namedTypeI,
+                typeJ.canCastTo(namedTypeI));
+        assertTrue(typeJ + " should be castable to Proxy " + proxyTypeI,
+                typeJ.canCastTo(proxyTypeI));
+
+        assertTrue(
+                "Named " + typeJ + " should be castable to " + typeI,
+                namedTypeJ.canCastTo(typeI));
+        assertTrue(
+                "Named " + typeJ + " should be castable to Named " + typeI,
+                namedTypeJ.canCastTo(namedTypeI));
+        assertTrue(
+                "Named " + typeJ + " should be castable to Proxy " + typeI,
+                namedTypeJ.canCastTo(proxyTypeI));
+
+        assertTrue(
+                "Proxy " + typeJ + " should be castable to " + typeI,
+                proxyTypeJ.canCastTo(typeI));
+        assertTrue(
+                "Proxy " + typeJ + " should be castable to Named " + typeI,
+                proxyTypeJ.canCastTo(namedTypeI));
+        assertTrue(
+                "Proxy " + typeJ + " should be castable to Proxy " + typeI,
+                proxyTypeJ.canCastTo(proxyTypeI));
+
+        if (checkSubtyping) {
+          if (i <= j) {
+            assertTrue(typeJ + " should be a subtype of " + typeI,
+                    typeJ.isSubtype(typeI));
+            assertTrue(
+                    "Named " + typeJ + " should be a subtype of Named " + typeI,
+                    namedTypeJ.isSubtype(namedTypeI));
+            assertTrue(
+                    "Proxy " + typeJ + " should be a subtype of Proxy " + typeI,
+                    proxyTypeJ.isSubtype(proxyTypeI));
+          } else {
+            assertFalse(typeJ + " should not be a subtype of " + typeI,
+                    typeJ.isSubtype(typeI));
+            assertFalse(
+                    "Named " + typeJ + " should not be a subtype of Named " + typeI,
+                    namedTypeJ.isSubtype(namedTypeI));
+            assertFalse(
+                    "Named " + typeJ + " should not be a subtype of Named " + typeI,
+                    proxyTypeJ.isSubtype(proxyTypeI));
+          }
+
+          JSType expectedSupremum = i < j ? typeI : typeJ;
+          JSType expectedInfimum = i > j ? typeI : typeJ;
+
+          assertTypeEquals(
+                  expectedSupremum + " should be the least supertype of " + typeI +
+                          " and " + typeJ,
+                  expectedSupremum, typeI.getLeastSupertype(typeJ));
+
+          // TODO(nicksantos): Should these tests pass?
+          //assertTypeEquals(
+          //    expectedSupremum + " should be the least supertype of Named " +
+          //    typeI + " and Named " + typeJ,
+          //    expectedSupremum, namedTypeI.getLeastSupertype(namedTypeJ));
+          //assertTypeEquals(
+          //    expectedSupremum + " should be the least supertype of Proxy " +
+          //    typeI + " and Proxy " + typeJ,
+          //    expectedSupremum, proxyTypeI.getLeastSupertype(proxyTypeJ));
+
+          assertTypeEquals(
+                  expectedInfimum + " should be the greatest subtype of " + typeI +
+                          " and " + typeJ,
+                  expectedInfimum, typeI.getGreatestSubtype(typeJ));
+
+          // TODO(nicksantos): Should these tests pass?
+          //assertTypeEquals(
+          //    expectedInfimum + " should be the greatest subtype of Named " +
+          //    typeI + " and Named " + typeJ,
+          //    expectedInfimum, namedTypeI.getGreatestSubtype(namedTypeJ));
+          //assertTypeEquals(
+          //    expectedInfimum + " should be the greatest subtype of Proxy " +
+          //    typeI + " and Proxy " + typeJ,
+          //    expectedInfimum, proxyTypeI.getGreatestSubtype(proxyTypeJ));
+        }
+      }
+    }
+  }
 
   JSType getNamedWrapper(String name, JSType jstype) {
     // Normally, there is no way to create a Named NoType alias so

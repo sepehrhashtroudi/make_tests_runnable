@@ -44,6 +44,24 @@ public class SourceMapGeneratorV1Test extends SourceMapTestCase {
     detailLevel = SourceMap.DetailLevel.ALL;
   }
 
+public void testGoldenOutput212() throws Exception { 
+     checkSourceMap("function f(foo, bar) {\r\n\n\n\nfoo = foo + bar + foo;" + "\nreturn foo;\n}", "{\n" + "\"version\":2,\n" + "\"file\":\"testcode\",\n" + "\"lineCount\":1,\n" + "\"lineMaps\":[" + "\"cAEBABIBA/ICA+ADICA/ICA+IDA9IEYBMBA5\"],\n" + "\"mappings\":[[0,1,0,0],\n" + "[0,1,9,0],\n" + "[0,1,10],\n" + "[0,1,11,1],\n" + "[0,1,16,2],\n" + "[0,1,21],\n" + "[0,5,0],\n" + "[0,5,0,1],\n" + "[0,5,6,1],\n" + "[0,5,12,2],\n" + "[0,5,18,1],\n" + "[0,6,0],\n" + "[0,6,7,1],\n" + "],\n" + "\"sources\":[\"testcode\"],\n" + "\"names\":[\"f\",\"foo\",\"bar\"]\n" + "}\n"); 
+ }
+public void testBasicDeterminism123() throws Exception { 
+     RunResult result1 = compile("file1", "foo;", "file2", "bar;"); 
+     RunResult result2 = compile("file2", "foo;", "file1", "bar;"); 
+     String map1 = getSourceMap(result1); 
+     String map2 = getSourceMap(result2); 
+     String files1 = map1.split("\n")[4]; 
+     String files2 = map2.split("\n")[4]; 
+     assertEquals(files1, files2); 
+ }
+public void testMultilineMapping124() throws Exception { 
+     compileAndCheck("function __BASIC__(__PARAM1__, __PARAM2__) {\n" + "var __VAR__ = '__STR__';\n" + "var __ANO__ = \"__STR2__\";\n" + "}"); 
+ }
+public void testGoldenOutput2125() throws Exception { 
+     checkSourceMap("function f(foo, bar) {\r\n\n\n\nfoo = foo + bar + foo;" + "\nreturn foo;\n}", "{\n" + "\"version\":2,\n" + "\"file\":\"testcode\",\n" + "\"lineCount\":1,\n" + "\"lineMaps\":[" + "\"cAEBABIBA/ICA+ADICA/ICA+IDA9IEYBMBA5\"],\n" + "\"mappings\":[[0,1,0,0],\n" + "[0,1,9,0],\n" + "[0,1,10],\n" + "[0,1,11,1],\n" + "[0,1,16,2],\n" + "[0,1,21],\n" + "[0,5,0],\n" + "[0,5,0,1],\n" + "[0,5,6,1],\n" + "[0,5,12,2],\n" + "[0,5,18,1],\n" + "[0,6,0],\n" + "[0,6,7,1],\n" + "\"sources\":[\"testcode\"],\n" + "\"names\":[\"f\",\"foo\",\"bar\"]\n" + "}\n"); 
+ }
   
 
   

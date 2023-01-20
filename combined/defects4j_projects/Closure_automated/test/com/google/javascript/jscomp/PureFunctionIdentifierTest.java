@@ -432,7 +432,21 @@ public class PureFunctionIdentifierTest extends CompilerTestCase {
       this.compiler = compiler;
     }
 
-    
+    @Override
+    public void process(Node externs, Node root) {
+      compiler.setHasRegExpGlobalReferences(regExpHaveSideEffects);
+      SimpleDefinitionFinder defFinder = new SimpleDefinitionFinder(compiler);
+      defFinder.process(externs, root);
+      PureFunctionIdentifier passUnderTest =
+              new PureFunctionIdentifier(compiler, defFinder);
+      passUnderTest.process(externs, root);
+
+      // Ensure that debug report computation works.
+      String debugReport = passUnderTest.getDebugReport();
+
+      NodeTraversal.traverse(compiler, externs, this);
+      NodeTraversal.traverse(compiler, root, this);
+    }
 
     @Override
     public void visit(NodeTraversal t, Node n, Node parent) {

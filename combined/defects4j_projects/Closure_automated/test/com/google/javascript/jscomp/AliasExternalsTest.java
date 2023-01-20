@@ -63,6 +63,12 @@ public class AliasExternalsTest extends CompilerTestCase {
   /**
    * Test standard global aliasing.
    */
+public void testPropMutatorNotPushedDeeper3() { 
+     test(createModuleChain("var a = [1]; a.length = 1;", "a.length = 0;"), new String[] { formatSetPropFn("length") + "var a = [1]; SETPROP_length(a, 1);", "SETPROP_length(a, 0);" }); 
+ }
+public void testNoAliasAnnotationForMultiVarDeclaration67() { 
+     test("[RuntimeObject, RuntimeObject, RuntimeObject," + " SelectionObject, SelectionObject, SelectionObject]", "var GLOBAL_SelectionObject = SelectionObject;" + "[RuntimeObject, RuntimeObject, RuntimeObject," + " GLOBAL_SelectionObject, GLOBAL_SelectionObject," + " GLOBAL_SelectionObject]"); 
+ }
   
 
   /**

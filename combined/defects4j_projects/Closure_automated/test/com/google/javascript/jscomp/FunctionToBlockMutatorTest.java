@@ -149,7 +149,53 @@ public class FunctionToBlockMutatorTest extends TestCase {
 
     return null;
   }
+  public void helperMutate(
+          String code, final String expectedResult, final String fnName,
+          final String resultName,
+          final boolean needsDefaultResult,
+          final boolean isCallInLoop) {
+    final Compiler compiler = new Compiler();
+    final FunctionToBlockMutator mutator = new FunctionToBlockMutator(
+            compiler, compiler.getUniqueNameIdSupplier());
+    Node expectedRoot = parse(compiler, expectedResult);
+    Preconditions.checkState(compiler.getErrorCount() == 0);
+    final Node expected = expectedRoot.getFirstChild();
+    final Node tree = parse(compiler, code);
+    Preconditions.checkState(compiler.getErrorCount() == 0);
 
+    Node externsRoot = new Node(Token.EMPTY);
+    Node mainRoot = tree;
+    MarkNoSideEffectCalls mark = new MarkNoSideEffectCalls(compiler);
+    mark.process(externsRoot, mainRoot);
+
+    final Node fnNode = findFunction(tree, fnName);
+    final Set<String> unsafe =
+            FunctionArgumentInjector.findModifiedParameters(fnNode);
+
+    // Fake precondition.
+    compiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
+
+    // inline tester
+    Method tester = new Method() {
+      @Override
+      public boolean call(NodeTraversal t, Node n, Node parent) {
+
+        Node result = mutator.mutate(
+                fnName, fnNode, n, resultName,
+                needsDefaultResult, isCallInLoop);
+        validateSourceInfo(compiler, result);
+        String explanation = expected.checkTreeEquals(result);
+        assertNull("\nExpected: " + compiler.toSource(expected) +
+                "\nResult: " + compiler.toSource(result) +
+                "\n" + explanation, explanation);
+        return true;
+      }
+    };
+
+    compiler.resetUniqueNameId();
+    TestCallback test = new TestCallback(fnName, tester);
+    NodeTraversal.traverse(compiler, tree, test);
+  }
   private static Node parse(Compiler compiler, String js) {
     Node n = compiler.parseTestCode(js);
     assertEquals(0, compiler.getErrorCount());

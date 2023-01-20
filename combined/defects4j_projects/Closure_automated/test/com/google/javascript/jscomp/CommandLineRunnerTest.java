@@ -147,6 +147,15 @@ public void testCodeBuilderAppend103() {
      assertEquals(1, cb.getLineIndex()); 
      assertEquals(6, cb.getColumnIndex()); 
  }
+public void testProcessCJSWithModuleOutput400() { 
+     useStringComparison = true; 
+     args.add("--process_common_js_modules"); 
+     args.add("--common_js_entry_module=foo/bar"); 
+     args.add("--module=auto"); 
+     setFilename(0, "foo/bar.js"); 
+     test("exports.test = 1", "var module$foo$bar={test:1};"); 
+     assertEquals("", outReader.toString()); 
+ }
 public void testPrintAstFlag401() { 
      args.add("--print_ast=true"); 
      testSame(""); 
@@ -158,6 +167,32 @@ public void testSourceMapExpansion1402() {
      args.add("--create_source_map=%outname%.map"); 
      testSame("var x = 3;"); 
      assertEquals("/path/to/out.js.map", lastCommandLineRunner.expandSourceMapPath(lastCompiler.getOptions(), null)); 
+ }
+public void testNoSrCFilesWithManifest403() throws IOException { 
+     args.add("--use_only_custom_externs=true"); 
+     args.add("--output_manifest=test.MF"); 
+     CommandLineRunner runner = createCommandLineRunner(new String[0]); 
+     String expectedMessage = ""; 
+     try { 
+         runner.doRun(); 
+     } catch (FlagUsageException e) { 
+         expectedMessage = e.getMessage(); 
+     } 
+     assertEquals(expectedMessage, "Bad --js flag. " + "Manifest files cannot be generated when the input is from stdin."); 
+ }
+public void testModuleWrapperBaseNameExpansion406() throws Exception { 
+     useModules = ModulePattern.CHAIN; 
+     args.add("--module_wrapper=m0:%s // %basename%"); 
+     args.add("--module_wrapper=m1:%s // %basename%"); 
+     testSame(new String[] { "var x = 3;", "var y = 4;" }); 
+     StringBuilder builder = new StringBuilder(); 
+     lastCommandLineRunner.writeModuleOutput(builder, lastCompiler.getModuleGraph().getRootModule()); 
+     assertEquals("var x=3; // m0.js\n", builder.toString()); 
+ }
+public void testTypeParsingOnWithVerbose408() { 
+     args.add("--warning_level=VERBOSE"); 
+     test("/** @return {number */ function f(a) { return a; }", RhinoErrorReporter.TYPE_PARSE_ERROR); 
+     test("/** @return {n} */ function f(a) { return a; }", RhinoErrorReporter.TYPE_PARSE_ERROR); 
  }
 public void testVersionFlag2409() { 
      lastArg = "--version"; 
@@ -187,19 +222,6 @@ public void testNameMapExpansion3413() {
      testSame(new String[] { "var x = 3;", "var y = 5;" }); 
      assertEquals("foo_m0.js.map", lastCommandLineRunner.expandSourceMapPath(lastCompiler.getOptions(), lastCompiler.getModuleGraph().getRootModule())); 
  }
-public void testTypeCheckingOff414() { 
-     CompilerOptions options = createCompilerOptions(); 
-     options.setLanguageIn(LanguageMode.ECMASCRIPT5_STRICT); 
-     WarningLevel.VERBOSE.setOptionsForWarningLevel(options); 
-     options.setLanguageIn(LanguageMode.ECMASCRIPT5); 
-     String code = "'use strict';\n" + "function App() {}\n" + "App.prototype = {\n" + "  get appData() { return this.appData_; },\n" + "  set appData(data) { this.appData_ = data; }\n" + "};"; 
-     Compiler compiler = compile(options, code); 
-     testSame(options, code); 
-     options.setLanguageIn(LanguageMode.ECMASCRIPT5); 
-     testSame(options, code); 
-     options.setLanguageIn(LanguageMode.ECMASCRIPT5_STRICT); 
-     test(options, code, "function App() {}\n" + "App.prototype = {\n" + "  get appData() { return this.appData_; },\n" + "  set appData(data) { this.appData_ = data; }\n" + "};"); 
- }
 public void testStaticFunction7416() { 
      testSame("var a = function() { return function() { this.x = 8; } }"); 
  }
@@ -216,15 +238,23 @@ public void testPrintTree418() {
      testSame(""); 
      assertEquals("digraph AST {\n" + "  node [color=lightblue2, style=filled];\n" + "  node0 [label=\"BLOCK\"];\n" + "  node1 [label=\"SCRIPT\"];\n" + "  node0 -> node1 [weight=1];\n" + "  node1 -> RETURN [label=\"UNCOND\", " + "fontcolor=\"red\", weight=0.01, color=\"red\"];\n" + "  node0 -> RETURN [label=\"SYN_BLOCK\", " + "fontcolor=\"red\", weight=0.01, color=\"red\"];\n" + "  node0 -> node1 [label=\"UNCOND\", " + "fontcolor=\"red\", weight=0.01, color=\"red\"];\n" + "}\n\n", new String(outReader.toByteArray())); 
  }
-public void testSortInputs419() throws Exception { 
-     SourceFile a = SourceFile.fromCode("a.js", "require('b');require('c')"); 
-     SourceFile b = SourceFile.fromCode("b.js", "require('d')"); 
-     SourceFile c = SourceFile.fromCode("c.js", "require('d')"); 
-     SourceFile d = SourceFile.fromCode("d.js", "1;"); 
-     assertSortedInputs(ImmutableList.of(d, b, c, a), ImmutableList.of(a, b, c, d)); 
-     assertSortedInputs(ImmutableList.of(d, b, c, a), ImmutableList.of(d, b, c, a)); 
-     assertSortedInputs(ImmutableList.of(d, c, b, a), ImmutableList.of(d, c, b, a)); 
-     assertSortedInputs(ImmutableList.of(d, b, c, a), ImmutableList.of(d, a, b, c)); 
+public void testModuleJSON420() { 
+     useStringComparison = true; 
+     args.add("--transform_amd_modules"); 
+     args.add("--process_common_js_modules"); 
+     args.add("--common_js_entry_module=foo/bar"); 
+     args.add("--output_module_dependencies=test.json"); 
+     setFilename(0, "foo/bar.js"); 
+     test("define({foo: 1})", "var module$foo$bar={},module$foo$bar={foo:1};"); 
+ }
+public void testDefineFlag3421() { 
+     args.add("--define=FOO=\"x'\""); 
+     args.add("--define=\"BAR=5\""); 
+     args.add("--D"); 
+     args.add("CCC"); 
+     args.add("-D"); 
+     args.add("DDD"); 
+     test("/** @define {boolean} */ var FOO = false;" + "/** @define {number} */ var BAR = 3;" + "/** @define {boolean} */ var CCC = false;" + "/** @define {boolean} */ var DDD = false;", "var FOO = !0, BAR = 5, CCC = !0, DDD = !0;"); 
  }
 public void testPrintPassGraph423() { 
      args.add("--print_pass_graph=true"); 

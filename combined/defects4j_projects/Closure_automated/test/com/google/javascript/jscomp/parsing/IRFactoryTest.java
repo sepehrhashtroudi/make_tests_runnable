@@ -51,11 +51,6 @@ public void testNestedOr32() {
      assertNodePosition(1, 4, andClause); 
      assertNodePosition(4, 4, cName); 
  }
-public void testScript280() { 
-     testIR(IR.script(), "SCRIPT\n"); 
-     testIR(IR.script(IR.empty(), IR.empty()), "SCRIPT\n" + "    EMPTY\n" + "    EMPTY\n"); 
-     testIR(IR.script(Lists.newArrayList(IR.empty(), IR.empty())), "SCRIPT\n" + "    EMPTY\n" + "    EMPTY\n"); 
- }
 public void testLinenoFor281() { 
      Node root = newParse("for(\n" + ";\n" + ";\n" + ") {\n" + "}\n"); 
      Node forNode = root.getFirstChild(); 

@@ -41,11 +41,6 @@ public void testConsumption154() {
      optimizer.consume(Lists.newArrayList(createPassFactory("a", 0, true), createPassFactory("b", 1, false), createPassFactory("c", 2, false), createPassFactory("d", 1, false), createPassFactory("e", 1, true), createPassFactory("f", 0, true))); 
      assertPasses("a", "b", "c", "d", "b", "c", "d", "c", "b", "d", "e", "f"); 
  }
-public void testCheckSymbolsOverrideForQuiet369() { 
-     args.add("--warning_level=QUIET"); 
-     args.add("--jscomp_error=undefinedVars"); 
-     test("x = 3;", VarCheck.UNDEFINED_VAR_ERROR); 
- }
 public void testSanityCheck370() { 
      Loop loop = optimizer.addFixedPointLoop(); 
      addLoopedPass(loop, "x", 1); 

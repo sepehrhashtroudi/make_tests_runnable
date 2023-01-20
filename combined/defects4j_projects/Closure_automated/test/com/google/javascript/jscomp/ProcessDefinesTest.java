@@ -80,15 +80,6 @@ public void testAssignInNonGlobalScope45() {
 public void testAssignBeforeDeclaration1372() { 
      test("/** @define {boolean} */var DEF=true;var x = DEF;DEF=false", null, ProcessDefines.INVALID_DEFINE_TYPE_ERROR); 
  }
-public void testInlineVariables373() { 
-     test("/** @define {boolean} */var DEF=true;function foo() {DEF=false};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
-     test("/** @define {boolean} */var DEF=true;function foo() {DEF=false};function bar() {DEF=false};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
-     test("/** @define {boolean} */var DEF=true;function foo() {DEF=false};function bar() {DEF=true};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.NON_GLOBAL_DEFINE_ERROR); 
- }
 public void testDefineOnlyFunction374() { 
      test("/** @define {boolean} */var DEF=true;function foo() {DEF=false}", null, ProcessDefines.INVALID_DEFINE_TYPE_ERROR); 
      test("/** @define {boolean} */var DEF=false;function foo() {DEF=true}", null, ProcessDefines.INVALID_DEFINE_TYPE_ERROR); 
@@ -106,15 +97,6 @@ public void testDefineOnlyFunction377() {
      test("/** @define {boolean} */var DEF=false;function foo() {DEF=true}", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
      test("/** @define {boolean} */var DEF=false;function foo() {DEF=true}", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
      test("/** @define {boolean} */var DEF=false;function foo() {DEF=false}", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
- }
-public void testCheckConstants2378() { 
-     CompilerOptions options = createCompilerOptions(); 
-     CompilationLevel level = CompilationLevel.SIMPLE_OPTIMIZATIONS; 
-     level.setOptionsForCompilationLevel(options); 
-     WarningLevel warnings = WarningLevel.DEFAULT; 
-     warnings.setOptionsForWarningLevel(options); 
-     String code = "" + "var foo;\n" + "/** @const */\n" + "var x = 1; foo(); x = 2;\n"; 
-     test(options, code, ConstCheck.CONST_REASSIGNED_VALUE_ERROR); 
  }
 public void testNamespacedDefine1379() { 
      overrides.put("a.B", new Node(Token.TRUE)); 
@@ -134,15 +116,6 @@ public void testNamespacedDefine1381() {
      test("var a = {};", "var a = {};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
      test("var a = {};", "var a = {};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
      test("var a = {};", "var a = {};", null, ProcessDefines.NON_GLOBAL_DEFINE_INIT_ERROR); 
- }
-public void testDefineOnlyFunction382() { 
-     test("/** @define {boolean} */var DEF=true;function foo() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
-     test("/** @define {boolean} */var DEF=true;function foo() {DEF=false};function bar() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
-     test("/** @define {boolean} */var DEF=false;function foo() {DEF=true};function bar() {DEF=false};", null, ProcessDefines.INVALID_DEFINE_NOT_ASSIGNABLE_ERROR); 
  }
 public void testDefineBadType383() { 
      test("/** @define {Object} */ var DEF = {}", null, ProcessDefines.INVALID_DEFINE_TYPE_ERROR); 

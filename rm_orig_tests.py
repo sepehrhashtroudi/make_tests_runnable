@@ -33,7 +33,10 @@ JAVA_PATTERNS = {
 
     'METHOD_TYPE': '''
     (method_declaration
-        (modifiers) @mod
+       (modifiers) @mod
+       (void_type) @void
+       (identifier) @name
+       (formal_parameters) @param
     ) ''',
 
     'METHOD_VOID': '''
@@ -91,15 +94,31 @@ parser.set_language(JAVA_LANGUAGE)
 # test_path = 'src/test/org/apache/commons/codec'
 # out_path = 'out/runnable_tests/org/apache/commons/'
 
-project_name = 'Cli'
-project_name_l = 'cli/'
-test_path = 'src/test/org/apache/commons/cli'
-out_path = 'out/runnable_tests/'
+# project_name = 'Cli'
+# project_name_l = 'cli/'
+# test_path = 'src/test/org/apache/commons/cli'
+# out_path = 'out/runnable_tests/'
+
+# project_name = 'Chart'
+# project_name_l = 'chart/'
+# test_path = 'tests/org/jfree/chart'
+# out_path = 'out/runnable_tests/org/jfree'
 
 # project_name = 'Time'
 # project_name_l = 'time/'
 # test_path = 'src/test/java/org/joda/time'
 # out_path = 'out/runnable_tests/org/joda/'
+
+project_name = 'JacksonDatabind'
+test_path = 'src/test/java/com/fasterxml/jackson/databind'
+out_path = 'out/runnable_tests'
+split_length = 5
+
+# project_name = 'Gson'
+# test_path = 'gson/src/test/java/com/google/gson'
+# out_path = 'out/runnable_tests'
+
+
 add_all_tests = 0
 
 no_test_flag = 0
@@ -123,6 +142,7 @@ def rm_orig_tests(code):
     ann_query = JAVA_LANGUAGE.query(JAVA_PATTERNS['ANNOTATION'])
     ann_captures = ann_query.captures(root_node)
     
+
     # get original test, with @Test annotations
     test_annotated = []
     for cp in mark_ann_captures:
@@ -135,15 +155,21 @@ def rm_orig_tests(code):
     # if nothing is annotated with @Test, check for methods with 'test'.
     if len(test_annotated) == 0:
         no_test_flag = 1
-        q = JAVA_LANGUAGE.query(JAVA_PATTERNS['METHOD_NAME'])
+        q = JAVA_LANGUAGE.query(JAVA_PATTERNS['METHOD_TYPE'])
         c = q.captures(root_node)
         
-    
-        for cp in c:
-            # print("code:" + get_blob(code, cp[0]))
-            # print("codetype :" + get_blob(code, cpt[0]))
-            if 'test' in get_blob(code, cp[0]).lower() and 'public void' in get_blob(code, cp[0]).lower():
-                test_annotated.append(cp[0])
+
+        for i,cp in enumerate(c):
+            if(i%4==0):
+                # print("code:" + get_blob(code, c[i][0]))
+                # print("code:" + get_blob(code, c[i+1][0]))
+                # print("code:" + get_blob(code, c[i+2][0]))
+                # print("code:" + get_blob(code, c[i+3][0]))
+                # print("codetype :" + get_blob(code, cpt[0]))
+                if 'public' in get_blob(code, c[i][0]).lower() and '@override' not in get_blob(code, c[i][0]).lower()\
+                    and 'void' in get_blob(code, c[i+1][0]).lower() and 'test' in get_blob(code, c[i+2][0]).lower()\
+                    and get_blob(code, c[i+3][0]).lower().replace(" ","")=='()' :
+                    test_annotated.append(cp[0].parent)
                 
     else:
         no_test_flag = 0
@@ -194,7 +220,7 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
     global not_parsable_tcs
     global not_compilable_tcs
 
-    total_gen_tcs+= len(gen_tests)
+    total_gen_tcs += len(gen_tests)
     if add_all_tests == 1:
         return gen_tests
     else:
@@ -236,7 +262,7 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
             full_code = '\n'.join(temp)
             with open(f'tmp/{curdir}/{file}', 'w') as f:
                 f.write(full_code)
-            out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf target && defects4j compile')
+            out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf build && rm -rf build-test && rm -rf target  && defects4j compile')
             if out == 0:
                 compilable_tcs.append(test_code)
             else:
@@ -260,11 +286,9 @@ def replace_tests(separate, project_name):
         # iterate java files
         for file in sorted(files):
             if file.endswith('.java'):
-                dir_splt = curdir.split(project_name_l)
-                if len(dir_splt) > 1:
-                    dr = project_name_l + dir_splt[1]
-                else:
-                    dr = project_name_l
+                dir_splt = curdir.split('/')
+                dr = "/".join(dir_splt[split_length:])
+                print(dr)
                 gen_test_path = os.path.join(out_path, dr, file)
                 cur_file_path = os.path.join(curdir, file)
                 print(cur_file_path)
@@ -277,6 +301,8 @@ def replace_tests(separate, project_name):
                 # check if there is a corresponding file that has the generated tc
                 if not Path(gen_test_path).is_file():
                     has_gen = False
+                    print("#######################################################################")
+                    print(gen_test_path)
                 else:
                     # remove methods with '@Test'
                     has_gen = True

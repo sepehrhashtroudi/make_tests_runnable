@@ -431,14 +431,132 @@ public class FunctionInjectorTest extends TestCase {
         expectedResult, code, fnName, mode, false);
   }
 
-  
+  public void helperCanInlineReferenceToFunction(
+          final CanInlineResult expectedResult,
+          final String code,
+          final String fnName,
+          final InliningMode mode,
+          boolean allowDecomposition) {
+    final Compiler compiler = new Compiler();
+    final FunctionInjector injector = new FunctionInjector(
+            compiler, compiler.getUniqueNameIdSupplier(), allowDecomposition,
+            assumeStrictThis,
+            assumeMinimumCapture);
+    final Node tree = parse(compiler, code);
 
+    Node externsRoot = new Node(Token.EMPTY);
+    Node mainRoot = tree;
+
+    final Node fnNode = findFunction(tree, fnName);
+    final Set<String> unsafe =
+            FunctionArgumentInjector.findModifiedParameters(fnNode);
+
+    // can-inline tester
+    Method tester = new Method() {
+      @Override
+      public boolean call(NodeTraversal t, Node n, Node parent) {
+        CanInlineResult result = injector.canInlineReferenceToFunction(
+                t, n, fnNode, unsafe, mode,
+                NodeUtil.referencesThis(fnNode),
+                NodeUtil.containsFunction(NodeUtil.getFunctionBody(fnNode)));
+        assertEquals(expectedResult, result);
+        return true;
+      }
+    };
+
+    compiler.resetUniqueNameId();
+    TestCallback test = new TestCallback(fnName, tester);
+    NodeTraversal.traverse(compiler, tree, test);
+  }
+
+  public void helperInlineReferenceToFunction(
+          String code, final String expectedResult,
+          final String fnName, final InliningMode mode,
+          final boolean decompose) {
+    final Compiler compiler = new Compiler();
+    final FunctionInjector injector = new FunctionInjector(
+            compiler, compiler.getUniqueNameIdSupplier(), decompose,
+            assumeStrictThis,
+            assumeMinimumCapture);
+
+    List<SourceFile> externsInputs = Lists.newArrayList(
+            SourceFile.fromCode("externs", ""));
+
+    CompilerOptions options = new CompilerOptions();
+    options.setCodingConvention(new GoogleCodingConvention());
+    compiler.init(externsInputs, Lists.newArrayList(
+            SourceFile.fromCode("code", code)), options);
+    Node parseRoot = compiler.parseInputs();
+    Node externsRoot = parseRoot.getFirstChild();
+    final Node tree = parseRoot.getLastChild();
+    assertNotNull(tree);
+    assertTrue(tree != externsRoot);
+
+    final Node expectedRoot = parseExpected(new Compiler(), expectedResult);
+
+    Node mainRoot = tree;
+    MarkNoSideEffectCalls mark = new MarkNoSideEffectCalls(compiler);
+    mark.process(externsRoot, mainRoot);
+
+    Normalize normalize = new Normalize(compiler, false);
+    normalize.process(externsRoot, mainRoot);
+    compiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
+
+    final Node fnNode = findFunction(tree, fnName);
+    assertNotNull(fnNode);
+    final Set<String> unsafe =
+            FunctionArgumentInjector.findModifiedParameters(fnNode);
+    assertNotNull(fnNode);
+
+    // inline tester
+    Method tester = new Method() {
+      @Override
+      public boolean call(NodeTraversal t, Node n, Node parent) {
+
+        CanInlineResult canInline = injector.canInlineReferenceToFunction(
+                t, n, fnNode, unsafe, mode,
+                NodeUtil.referencesThis(fnNode),
+                NodeUtil.containsFunction(NodeUtil.getFunctionBody(fnNode)));
+        assertTrue("canInlineReferenceToFunction should not be CAN_NOT_INLINE",
+                CanInlineResult.NO != canInline);
+        if (decompose) {
+          assertTrue("canInlineReferenceToFunction " +
+                          "should be CAN_INLINE_AFTER_DECOMPOSITION",
+                  CanInlineResult.AFTER_PREPARATION == canInline);
+
+          Set<String> knownConstants = Sets.newHashSet();
+          ExpressionDecomposer decomposer = new ExpressionDecomposer(
+                  compiler, compiler.getUniqueNameIdSupplier(), knownConstants);
+          injector.setKnownConstants(knownConstants);
+          injector.maybePrepareCall(n);
+
+          assertTrue("canInlineReferenceToFunction " +
+                          "should be CAN_INLINE",
+                  CanInlineResult.YES != canInline);
+        }
+
+        Node result = injector.inline(
+                t, n, fnName, fnNode, mode);
+        validateSourceInfo(compiler, result);
+        String explanation = expectedRoot.checkTreeEquals(tree.getFirstChild());
+        assertNull("\nExpected: " + toSource(expectedRoot) +
+                "\nResult: " + toSource(tree.getFirstChild()) +
+                "\n" + explanation, explanation);
+        return true;
+      }
+    };
+
+    compiler.resetUniqueNameId();
+    TestCallback test = new TestCallback(fnName, tester);
+    NodeTraversal.traverse(compiler, tree, test);
+  }
   public void helperInlineReferenceToFunction(
       String code, final String expectedResult,
       final String fnName, final InliningMode mode) {
     helperInlineReferenceToFunction(
         code, expectedResult, fnName, mode, false);
   }
+
 
   private void validateSourceInfo(Compiler compiler, Node subtree) {
     (new LineNumberCheck(compiler)).setCheckSubTree(subtree);

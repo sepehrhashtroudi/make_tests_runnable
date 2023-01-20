@@ -53,11 +53,38 @@ public void testAssignWithHook86() {
 public void testNamespacedClass131() { 
      test("var foo = {};foo.bar = {};foo.bar.prototype.baz = {}", ""); 
  }
+public void testSetterInDoWhilePredicate86() { 
+     testSame("var a = 1;" + "var Class = function() {}; " + "do {} while(Class.property_ = a);"); 
+ }
+public void testSetterInWhilePredicate87() { 
+     test("var a = 1;" + "var Class = function() {}; " + "while (Class.property_ = a);", "var a = 1; for (;a;) {}"); 
+ }
+public void testRemoveInheritedClass388() { 
+     test("function goog$inherits(){}" + "/**@constructor*/function a(){}" + "/**@constructor*/function b(){}" + "goog$inherits(b,a); new a;" + "var c = a; var d = a.g; new b", "function goog$inherits(){}" + "function a(){} function b(){} goog$inherits(b,a); new a; new b"); 
+ }
+public void testAliasInstanceof589() { 
+     test("function Foo() {}" + "function Bar() {}" + "var b = x ? Foo : Bar;" + "var y = new Foo();" + "if (y instanceof b) {}", "function Foo() {}" + "var y = new Foo;" + "if (false){}"); 
+ }
+public void testNestedAssign290() { 
+     test("var a, b = a = 1; foo(b)", "var b = 1; foo(b)"); 
+ }
 public void testUnintendedUseOfInheritsInLocalScope291() { 
      testSame("goog.mixin = function() {}; " + "var x = {}; var y = {}; (function() { goog.mixin(x, y); })();"); 
  }
+public void testRefChain892() { 
+     test("var a = {}; var b = a[1] || f()", "var a = {}; a[1] || f()"); 
+ }
 public void testGetElem393() { 
      testSame("var foo = {'i': 0, 'j': 1}; foo['k'] = 2; top.foo = foo;"); 
+ }
+public void testRefChain2394() { 
+     test("var a = {}; var b = a[1] || f()", "var a = {}; a[1] || f()"); 
+ }
+public void testSetterInForStruct895() { 
+     test("var i = 0, j = 0, k = 0; for (i = 1, j = i, k = 2; i = 0;);", "var i = 0; for(i = 1, i , 2; i = 0;);"); 
+ }
+public void testRemoveDeclaration496() { 
+     testSame("var a,b,c; c = a = b = {}; a.x = 1;alert(c.x);"); 
  }
 public void testSingletonGetter397() { 
      testSame("function Foo() {} goog$addSingletonGetter(Foo);" + "this.x = Foo.getInstance();"); 

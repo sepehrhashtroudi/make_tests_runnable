@@ -84,6 +84,16 @@ public class InstrumentFunctionsTest extends CompilerTestCase {
       this.compiler = compiler;
     }
 
-    
+    @Override
+    public void process(Node externs, Node root) {
+      FunctionNames functionNames = new FunctionNames(compiler);
+      functionNames.process(externs, root);
+
+      InstrumentFunctions instrumentation =
+              new InstrumentFunctions(compiler, functionNames,
+                      "test init code", "testfile.js",
+                      new StringReader(instrumentationPb));
+      instrumentation.process(externs, root);
+    }
   }
 }

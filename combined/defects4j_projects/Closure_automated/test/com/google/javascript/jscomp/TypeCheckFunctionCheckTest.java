@@ -94,6 +94,10 @@ public class TypeCheckFunctionCheckTest extends CompilerTestCase {
   public void assertOk(String params, String arguments) {
     assertWarning(params, arguments, null);
   }
-
+  public void assertWarning(String params, String arguments,
+                            DiagnosticType type) {
+    testSame("function foo(" + params + ") {} foo(" + arguments + ");",
+            type);
+  }
   
 }

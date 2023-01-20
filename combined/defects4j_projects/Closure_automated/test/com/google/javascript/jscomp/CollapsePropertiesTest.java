@@ -69,24 +69,8 @@ public void testObjLitAssignedInTernaryExpression2272() {
 public void testIssue389273() { 
      test("function alias() {}" + "var dojo = {};" + "dojo.gfx = {};" + "dojo.declare = function() {};" + "/** @constructor */" + "dojo.gfx.Shape = function() {};" + "dojo.gfx.Shape = dojo.declare('dojo.gfx.Shape');" + "alias(dojo);", "function alias() {}" + "var dojo$gfx$Shape = function() {};" + "dojo$gfx$Shape = dojo.declare('dojo.gfx.Shape');" + "alias(dojo);", null, CollapseProperties.UNSAFE_NAMESPACE_WARNING); 
  }
-public void testIssue598274() { 
-     CompilerOptions options = createCompilerOptions(); 
-     options.setLanguageIn(LanguageMode.ECMASCRIPT5_STRICT); 
-     WarningLevel.VERBOSE.setOptionsForWarningLevel(options); 
-     options.setLanguageIn(LanguageMode.ECMASCRIPT5); 
-     String code = "'use strict';\n" + "function App() {}\n" + "App.prototype = {\n" + "  get appData() { return this.appData_; },\n" + "  set appData(data) { this.appData_ = data; }\n" + "};"; 
-     Compiler compiler = compile(options, code); 
-     testSame(options, code); 
- }
 public void testLocalAlias4276() { 
      test("var a = {b: 3}; var c = {d: 5}; " + "function f() { var x = a; var y = c; f(x.b); f(y.d); }", "var a$b = 3; var c$d = 5; " + "function f() { var x = null; var y = null; f(a$b); f(c$d);}"); 
- }
-public void testIssue90277() { 
-     CompilerOptions options = createCompilerOptions(); 
-     options.foldConstants = true; 
-     options.inlineVariables = true; 
-     options.removeDeadCode = true; 
-     test(options, "var x; x && alert(1);", ""); 
  }
 public void testPropWithDollarSign2278() { 
      test("var a = {b: 3}; var c = {d: 5}; " + "function f() { var x = a; var y = c; f(x.b); f(y.d); }", "var a$b = 3; var c$d = 5; " + "function f() { var x = null; var y = null; f(a$b); f(c$d);}"); 

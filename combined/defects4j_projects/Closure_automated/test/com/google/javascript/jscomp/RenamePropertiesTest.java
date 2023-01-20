@@ -68,9 +68,6 @@ public void testPropertyAffinity82() {
 public void testRemoveRenameFunctionStubs283() { 
      test("function JSCompiler_renameProperty(x) { return x; }" + "var foo = {myProp: 0}; f(foo[JSCompiler_renameProperty('myProp')]);", "var foo = {a: 0}; f(foo['a']);"); 
  }
-public void testStableSimple284() { 
-     testStable("Bar.prototype['getFoo']=function(){};Bar.getFoo(b);" + "Bar.prototype['getBaz']=function(){}", "Bar.prototype['a']=function(){};Bar.a(b);" + "Bar.prototype['b']=function(){}", "Bar.prototype['getFoo']=function(){};Bar.getFoo(b);" + "Bar.prototype['getBar']=function(){};" + "Bar.prototype['getBaz']=function(){}", "Bar.prototype['a']=function(){};Bar.a(b);" + "Bar.prototype['c']=function(){};" + "Bar.prototype['b']=function(){}"); 
- }
 public void testPseudoNames85() { 
      generatePseudoNames = true; 
      test("var foo={};foo.x=1;foo.y=2;foo.z=3;" + "function f1() { foo.z; foo.z; foo.z; foo.y}" + "function f2() {                      foo.x}", "var foo={};foo.c=1;foo.b=2;foo.a=3;" + "function f1() { foo.a; foo.a; foo.a; foo.b}" + "function f2() {                      foo.c}"); 

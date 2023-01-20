@@ -152,44 +152,8 @@ public void testCheckTreeEquals301() {
      Node node2 = new Node(1); 
      assertNull(node1.checkTreeEquals(node2)); 
  }
-public void testLocalValue2302() { 
-     Node newExpr = getNode("new x()"); 
-     assertFalse(NodeUtil.evaluatesToLocalValue(newExpr)); 
-     Preconditions.checkState(newExpr.isNew()); 
-     Node.SideEffectFlags flags = new Node.SideEffectFlags(); 
-     flags.clearAllFlags(); 
-     newExpr.setSideEffectFlags(flags.valueOf()); 
-     assertTrue(NodeUtil.evaluatesToLocalValue(newExpr)); 
-     flags.clearAllFlags(); 
-     flags.setMutatesThis(); 
-     newExpr.setSideEffectFlags(flags.valueOf()); 
-     assertTrue(NodeUtil.evaluatesToLocalValue(newExpr)); 
-     flags.clearAllFlags(); 
-     flags.setReturnsTainted(); 
-     newExpr.setSideEffectFlags(flags.valueOf()); 
-     assertTrue(NodeUtil.evaluatesToLocalValue(newExpr)); 
-     flags.clearAllFlags(); 
-     flags.setThrows(); 
-     newExpr.setSideEffectFlags(flags.valueOf()); 
-     assertFalse(NodeUtil.evaluatesToLocalValue(newExpr)); 
-     flags.clearAllFlags(); 
-     flags.setMutatesArguments(); 
-     newExpr.setSideEffectFlags(flags.valueOf()); 
-     assertFalse(NodeUtil.evaluatesToLocalValue(newExpr)); 
-     flags.clearAllFlags(); 
-     flags.setMutatesGlobalState(); 
-     newExpr.setSideEffectFlags(flags.valueOf()); 
-     assertFalse(NodeUtil.evaluatesToLocalValue(newExpr)); 
- }
 public void testUnhandledTopNode304() { 
      testSame("function Foo() {}; Foo.prototype.isBar = function() {};" + "function Bar() {}; Bar.prototype.isFoo = function() {};" + "var foo = new Foo(); var bar = new Bar();" + "var cond = foo.isBar() && bar.isFoo();" + "if (cond) {window.alert('hello');}"); 
- }
-public void testCheckTreeTypeAwareEqualsSameNull305() { 
-     TestErrorReporter testErrorReporter = new TestErrorReporter(null, null); 
-     JSTypeRegistry registry = new JSTypeRegistry(testErrorReporter); 
-     Node node1 = Node.newString(Token.NAME, "f"); 
-     Node node2 = Node.newString(Token.NAME, "f"); 
-     assertTrue(node1.isEquivalentToTyped(node2)); 
  }
 public void testDoNotInlineIntoLhsOfAssign309() { 
      noInline("var x = 1; x += 3;"); 

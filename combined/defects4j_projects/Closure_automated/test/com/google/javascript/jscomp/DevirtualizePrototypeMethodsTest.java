@@ -340,6 +340,13 @@ public class DevirtualizePrototypeMethodsTest extends CompilerTestCase {
     private final CompilerPass passUnderTest;
     private final List<String> typeInformation;
 
+    @Override
+    public void process(Node externs, Node root) {
+      passUnderTest.process(externs, root);
+      NodeTraversal.traverse(compiler, externs, new GatherCallback());
+      NodeTraversal.traverse(compiler, root, new GatherCallback());
+    }
+
     TypeInformationGatherer(Compiler compiler,
                                     CompilerPass passUnderTest,
                                     List<String> typeInformation) {

@@ -161,11 +161,6 @@ public void testObject210() throws Exception {
      testConversion("x = {get a() {return 1}}"); 
      testConversion("x = {set a(b) {}}"); 
  }
-public void testCatchValidation211() throws Exception { 
-     testValidation("" + "['CatchClause',{}," + "['IdPatt',{'name':'e'}]," + "['BlockStmt',{}]]"); 
-     testNotEnoughChildrenValidation("" + "['CatchClause',{}," + "['IdPatt',{'name':'e'}]]", TagType.CatchClause, 2, 1); 
-     testWrongChildTypeValidation("" + "['CatchClause',{}," + "['IdExpr',{'name':'e'}]," + "['BlockStmt',{}]]", TagType.CatchClause, TagType.IdPatt, TagType.IdExpr, 0); 
- }
 public void testLabels212() throws Exception { 
      testConversion("s: for (var i in x) {;}"); 
      testConversion("s: for (var i in x) {f(x)}"); 
@@ -178,11 +173,6 @@ public void testLabels212() throws Exception {
      testConversion("s: for (i in x) {if (i % 2) {" + "continue} else {var x = i / 3; f(x)}}"); 
      testConversion("s: for (i in x) {if (i > 5) {break s}}"); 
      testConversion("s: for (i in x) {if (i % 2) {" + "continue} else {var x = i / 3; f(x)}}"); 
- }
-public void testReturnStmtValidation213() throws Exception { 
-     testValidation("" + "['ReturnStmt',{}," + "['IdExpr',{'name':'x'}]," + "['BlockStmt',{}]]"); 
-     testNotEnoughChildrenValidation("" + "['ReturnStmt',{}," + "['IdExpr',{'name':'A'}]]", TagType.ReturnStmt, 2, 1); 
-     testWrongChildTypeValidation("" + "['ReturnStmt',{}," + "['IdExpr',{'name':'A'}]," + "['BlockStmt',{}]]", TagType.ReturnStmt, TagType.ReturnStmt, 1, 0); 
  }
 public void testReturn214() throws Exception { 
      testConversion("function f() { return;}"); 
@@ -322,11 +312,6 @@ public void testOperators227() throws Exception {
      testConversion("true ? x : y"); 
      testConversion("(function() {var y = 2 + 3 * 4; return y >> 1})() ? x : y"); 
  }
-public void testAssignExprValidation228() throws Exception { 
-     testValidation("" + "['AssignExpr',{'op':'.'}," + "['IdExpr',{'name':'x'}]," + "['LiteralExpr',{'type':'string','value':'foo'}]]"); 
-     testNotEnoughChildrenValidation("" + "['AssignExpr',{'op':'[]'}," + "['IdExpr',{'name':'x'}]]", TagType.AssignExpr, 2, 1); 
-     testMissingArgument("" + "['AssignExpr',{}," + "['IdExpr',{'name':'x'}]," + "['LiteralExpr',{'type':'string','value':'foo'}]]", TagAttr.OP, TagType.AssignExpr); 
- }
 public void testLabels229() throws Exception { 
      testConversion("s: for (var i in x) {;}"); 
      testConversion("s: for (var i in x) {f(x)}"); 
@@ -367,11 +352,6 @@ public void testUnaryExpressions231() throws Exception {
      testConversion("void void !x"); 
      testConversion("void (x + 1)"); 
  }
-public void testCountExprValidation232() throws Exception { 
-     testValidation("" + "['CountExpr',{'op':'.'}," + "['IdExpr',{'name':'x'}]," + "['LiteralExpr',{'type':'string','value':'foo'}]]"); 
-     testNotEnoughChildrenValidation("" + "['CountExpr',{'op':'[]'}," + "['IdExpr',{'name':'x'}]]", TagType.CountExpr, 2, 1); 
-     testMissingArgument("" + "['CountExpr',{}," + "['IdExpr',{'name':'x'}]," + "['LiteralExpr',{'type':'string','value':'foo'}]]", TagAttr.OP, TagType.CountExpr); 
- }
 public void testCount233() throws Exception { 
      testConversion("/ab/"); 
      testConversion("/ab/g"); 
@@ -381,11 +361,6 @@ public void testCount233() throws Exception {
      testConversion("var x = /ab/g"); 
      testConversion("function f() {" + "/ab/; var x = /ab/; (function g() {/ab/; var x = /ab/})()}"); 
      testConversion("var f = function () {return /ab/g;}"); 
- }
-public void testInvokeExprValidation234() throws Exception { 
-     testValidation("" + "['InvokeExpr',{'op':'.'}," + "['IdExpr',{'name':'x'}]," + "['LiteralExpr',{'type':'string','value':'foo'}]]"); 
-     testNotEnoughChildrenValidation("" + "['InvokeExpr',{'op':'[]'}," + "['IdExpr',{'name':'x'}]]", TagType.InvokeExpr, 2, 1); 
-     testMissingArgument("" + "['InvokeExpr',{}," + "['IdExpr',{'name':'x'}]," + "['LiteralExpr',{'type':'string','value':'foo'}]]", TagAttr.OP, TagType.InvokeExpr); 
  }
 public void testFunctions235() throws Exception { 
      testConversion("(function () {})"); 
@@ -556,11 +531,6 @@ public void testReturn247() throws Exception {
      testConversion("+3.14"); 
      testConversion("true"); 
      testConversion("false"); 
- }
-public void testReturnStmtValidation248() throws Exception { 
-     testValidation("" + "['ReturnStmt',{}," + "['IdExpr',{'name':'x'}]," + "['BlockStmt',{}]]"); 
-     testNotEnoughChildrenValidation("" + "['ReturnStmt',{}," + "['IdExpr',{'name':'A'}]]", TagType.ReturnStmt, 2, 1); 
-     testTooManyChildrenValidation("" + "['ReturnStmt',{}," + "['IdExpr',{'name':'A'}]," + "['BlockStmt',{}]]", TagType.ReturnStmt, 2, 3); 
  }
 public void testIf249() throws Exception { 
      testConversion("if (true) {;}"); 

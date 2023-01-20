@@ -61,9 +61,6 @@ public void testIsNameReferenceCount29() {
      assertTrue(NodeUtil.isNameReferenced(parse("goo.foo"), "goo")); 
      assertFalse(NodeUtil.isNameReferenced(parse("goo.foo"), "foo")); 
  }
-public void testDfa7264() throws Exception { 
-     testTypes("/** @constructor */ var T = function() {};\n" + "/** @type {Date?} */ T.prototype.x = null;\n" + "/** @param {!T} t */ function f(t) {\n" + "if (!t.x) { return; }\n" + "/** @type {!Date} */ var e = t.x;\n}"); 
- }
   
 
   public void assertLiteralAndImmutable(Node n) {

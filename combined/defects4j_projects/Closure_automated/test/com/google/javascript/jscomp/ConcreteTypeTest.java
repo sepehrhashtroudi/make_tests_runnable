@@ -56,6 +56,49 @@ public class ConcreteTypeTest extends TestCase {
   private JSType unknownType;
   private Factory factory;
 
+public void testFunction366() { 
+     ConcreteFunctionType fun = createFunction("fun", "a", "b"); 
+     assertTrue(fun.isFunction()); 
+     assertNotNull(fun.getCallSlot()); 
+     assertNotNull(fun.getReturnSlot()); 
+     assertNotNull(fun.getParameterSlot(0)); 
+     assertNotNull(fun.getParameterSlot(1)); 
+     assertNull(fun.getParameterSlot(2)); 
+     assertTrue(fun.getInstanceType().isInstance()); 
+ }
+public void testGetX367() { 
+     ConcreteFunctionType fun1 = createFunction("fun1"); 
+     ConcreteFunctionType fun2 = createFunction("fun2"); 
+     ConcreteInstanceType obj1 = fun1.getInstanceType(); 
+     ConcreteInstanceType obj2 = fun2.getInstanceType(); 
+     ConcreteType union1 = fun1.unionWith(obj1); 
+     ConcreteType union2 = union1.unionWith(fun2).unionWith(obj2); 
+     assertEqualSets(Lists.newArrayList(), NONE.getFunctions()); 
+     assertEqualSets(Lists.newArrayList(), NONE.getInstances()); 
+     assertEqualSets(Lists.newArrayList(fun1), fun1.getFunctions()); 
+     assertEqualSets(Lists.newArrayList(), fun1.getInstances()); 
+     assertEqualSets(Lists.newArrayList(), obj1.getFunctions()); 
+     assertEqualSets(Lists.newArrayList(obj1), obj1.getInstances()); 
+     assertEqualSets(Lists.newArrayList(fun1), union1.getFunctions()); 
+     assertEqualSets(Lists.newArrayList(obj1), union1.getInstances()); 
+     assertEqualSets(Lists.newArrayList(fun1, fun2), union2.getFunctions()); 
+     assertEqualSets(Lists.newArrayList(obj1, obj2), union2.getInstances()); 
+ }
+public void testUnionWith368() { 
+     ConcreteFunctionType fun = createFunction("fun"); 
+     ConcreteType obj = fun.getInstanceType(); 
+     ConcreteType both = new ConcreteUnionType(fun, obj); 
+     assertTrue(fun.isSingleton()); 
+     assertTrue(obj.isSingleton()); 
+     assertFalse(both.isSingleton()); 
+     assertFalse(NONE.isSingleton()); 
+     assertFalse(ALL.isSingleton()); 
+     checkUnionWith(fun, NONE, fun); 
+     checkUnionWith(fun, ALL, ALL); 
+     checkUnionWith(fun, obj, both); 
+     checkUnionWith(both, NONE, both); 
+     checkUnionWith(both, ALL, ALL); 
+ }
   
 
   private void checkEquality(List<ConcreteType> types) {

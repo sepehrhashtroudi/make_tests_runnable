@@ -51,26 +51,6 @@ public void testGetCurrentNode342() {
      t.traverseAtScope(fnScope); 
      callback.assertEntered(); 
  }
-public void testGetCurrentNode343() { 
-     Compiler compiler = new Compiler(); 
-     ScopeCreator creator = new SyntacticScopeCreator(compiler, null); 
-     ExpectNodeOnEnterScope callback = new ExpectNodeOnEnterScope(); 
-     NodeTraversal t = new NodeTraversal(compiler, callback, creator); 
-     String code = "" + "var a; " + "function foo() {" + "  var b;" + "}"; 
-     Node tree = parse(compiler, code); 
-     Scope topScope = creator.createScope(tree, null); 
-     callback.expect(tree.getFirstChild(), tree); 
-     t.traverseWith(tree.getFirstChild(), topScope); 
-     callback.assertEntered(); 
-     callback.expect(tree.getFirstChild(), tree.getFirstChild()); 
-     t.traverse(tree.getFirstChild()); 
-     callback.assertEntered(); 
-     Node fn = tree.getFirstChild().getNext(); 
-     Scope fnScope = creator.createScope(fn, topScope); 
-     callback.expect(fn, fn); 
-     t.traverseWith(fnScope); 
-     callback.assertEntered(); 
- }
 public void testUnexpectedException344() { 
      final String TEST_EXCEPTION = "test me"; 
      NodeTraversal.Callback cb = new NodeTraversal.AbstractPostOrderCallback() { 
@@ -90,26 +70,6 @@ public void testUnexpectedException344() {
      } catch (RuntimeException e) { 
          assertTrue(e.getMessage().startsWith("INTERNAL COMPILER ERROR.\n" + "Please report this problem.\n" + "test me")); 
      } 
- }
-public void testGetCurrentNode345() { 
-     Compiler compiler = new Compiler(); 
-     ScopeCreator creator = new SyntacticScopeCreator(compiler, null); 
-     ExpectNodeOnEnterScope callback = new ExpectNodeOnEnterScope(); 
-     NodeTraversal t = new NodeTraversal(compiler, callback, creator); 
-     String code = "" + "var a; " + "function foo() {" + "  var b;" + "}"; 
-     Node tree = parse(compiler, code); 
-     Scope topScope = creator.createScope(tree, null); 
-     callback.expect(tree.getFirstChild(), tree); 
-     t.traverse(tree.getFirstChild()); 
-     callback.assertEntered(); 
-     callback.expect(tree.getFirstChild(), tree.getFirstChild()); 
-     t.traverse(tree.getFirstChild()); 
-     callback.assertEntered(); 
-     Node fn = tree.getFirstChild().getNext(); 
-     Scope fnScope = creator.createScope(fn, topScope); 
-     callback.expect(fn, fn); 
-     t.traverse(fnScope); 
-     callback.assertEntered(); 
  }
   
 

@@ -56,28 +56,9 @@ public void testExpressionVariableReassignment394() {
      assertMatch("var a,b,c; D: var x = a + b; c = 1; U:x"); 
      assertNotMatch("var a,b,c; D: var x = a + b; c ? a = 1 : 0; U:x"); 
  }
-public void testPrettyPrinter395() { 
-     assertPrettyPrint("(function(){})();", "(function() {\n})();\n"); 
-     assertPrettyPrint("var a = (function() {});alert(a);", "var a = function() {\n};\nalert(a);\n"); 
-     assertPrettyPrint("if (1) {}", "if(1) {\n" + "}\n"); 
-     assertPrettyPrint("if (1) {alert(\"\");}", "if(1) {\n" + "  alert(\"\")\n" + "}\n"); 
-     assertPrettyPrint("if (1)alert(\"\");", "if(1) {\n" + "  alert(\"\")\n" + "}\n"); 
-     assertPrettyPrint("if (1) {alert();alert();}", "if(1) {\n" + "  alert();\n" + "  alert()\n" + "}\n"); 
-     assertPrettyPrint("label: alert();", "label:alert();\n"); 
-     assertPrettyPrint("if (1) alert();", "if(1) {\n" + "  alert()\n" + "}\n"); 
-     assertPrettyPrint("for (;;) alert();", "for(;;) {\n" + "  alert()\n" + "}\n"); 
-     assertPrettyPrint("while (1) alert();", "while(1) {\n" + "  alert()\n" + "}\n"); 
-     assertPrettyPrint("if (1) {} else {alert(a);}", "if(1) {\n" + "}else {\n  alert(a)\n}\n"); 
-     assertPrettyPrint("if (1) alert(a); else alert(b);", "if(1) {\n" + "  alert(a)\n" + "}else {\n" + "  alert(b)\n" + "}\n"); 
-     assertPrettyPrint("for(;;) { alert();}", "for(;;) {\n" + "  alert()\n" + "}\n");
-}
-
 public void testArgumentsObjectModifications397() { 
      computeDefUse("D: param1 = 1; arguments[0] = 2; U: param1"); 
      assertNotSame(def, defUse.getDefNode("param1", use)); 
- }
-public void testTypeTagConflict22398() throws Exception { 
-     parse("/**\n" + " * @protected {string}\n" + " * @param {string} x\n" + " */\n" + "function DictDict(x) {}", "Bad type annotation. " + "type annotation incompatible with other annotations"); 
  }
   
 

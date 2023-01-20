@@ -99,8 +99,69 @@ public class SimpleDefinitionFinderTest extends CompilerTestCase {
       this.compiler = compiler;
     }
 
-    
+    public void process(Node externs, Node root) {
+      passUnderTest.process(externs, root);
+      NodeTraversal.traverse(compiler, externs, this);
+      NodeTraversal.traverse(compiler, root, this);
 
+      for (DefinitionSite defSite : passUnderTest.getDefinitionSites()) {
+        Node node = defSite.node;
+        Definition definition = defSite.definition;
+        StringBuilder sb = new StringBuilder();
+        sb.append("DEF ");
+        sb.append(Token.name(node.getType()));
+        sb.append(" ");
+        sb.append(node.getQualifiedName());
+        sb.append(" -> ");
+
+        if (definition.isExtern()) {
+          sb.append("EXTERN ");
+        }
+
+        Node rValue = definition.getRValue();
+        if (rValue != null) {
+          sb.append(Token.name(rValue.getType()));
+        } else {
+          sb.append("<null>");
+        }
+
+        found.add(sb.toString());
+      }
+
+    }
+    @Override
+    public void visit(NodeTraversal traversal, Node node, Node parent) {
+      Collection<Definition> defs =
+              passUnderTest.getDefinitionsReferencedAt(node);
+      if (defs != null) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("USE ");
+        sb.append(Token.name(node.getType()));
+        sb.append(" ");
+        sb.append(node.getQualifiedName());
+        sb.append(" -> ");
+        Multiset<String> defstrs = TreeMultiset.create();
+        for (Definition def : defs) {
+          String defstr;
+
+          Node rValue = def.getRValue();
+          if (rValue != null) {
+            defstr = Token.name(rValue.getType());
+          } else {
+            defstr = "<null>";
+          }
+
+          if (def.isExtern()) {
+            defstr = "EXTERN " + defstr;
+          }
+
+          defstrs.add(defstr);
+        }
+
+        sb.append(defstrs.toString());
+        found.add(sb.toString());
+      }
+    }
     
   }
 }

@@ -62,27 +62,12 @@ public void testRemovalOfNamespacedReferencesOfProperties315() throws Exception 
      Symbol domHelperMethod = domHelper.getPropertyScope().getSlot("method"); 
      assertNotNull(domHelperMethod); 
  }
-public void testMemoizedTypedScopeCreator316() { 
-     CompilerOptions options = createCompilerOptions(); 
-     options.checkTypes = true; 
-     options.ambiguateProperties = true; 
-     options.propertyRenaming = PropertyRenamingPolicy.ALL_UNQUOTED; 
-     test(options, "function someTest() {\n" + "  /** @constructor */\n" + "  function Foo() { this.instProp = 3; }\n" + "  Foo.prototype.protoProp = function(a, b) {};\n" + "  /** @constructor\n @extends Foo */\n" + "  function Bar() {}\n" + "  goog.inherits(Bar, Foo);\n" + "  var o = new Bar();\n" + "  o.protoProp(o.protoProp, o.instProp);\n" + "}", "function someTest() {\n" + "  function Foo() { this.b = 3; }\n" + "  function Bar() {}\n" + "  Foo.prototype.a = function(a, b) {};\n" + "  goog.c(Bar, Foo);\n" + "  var o = new Bar();\n" + "  o.a(o.a, o.b);\n" + "}"); 
- }
 public void testTypeCheckingOff319() { 
      options = new CompilerOptions(); 
      SymbolTable table = createSymbolTable("/** @contstructor */" + "function F() {" + "  this.field1 = 3;" + "}" + "F.prototype.method1 = function() {" + "  this.field1 = 5;" + "};" + "(new F()).method1();"); 
      assertNull(getGlobalVar(table, "F.prototype.field1")); 
      Symbol sym = getGlobalVar(table, "F"); 
      assertEquals(3, table.getReferenceList(sym).size()); 
- }
-public void testToString320() { 
-     ObjectType type = registry.createAnonymousObjectType(null); 
-     assertEquals("{}", type.toString()); 
-     type.defineDeclaredProperty("foo", NUMBER_TYPE, null); 
-     assertEquals("{foo: number}", type.toString()); 
-     type.defineDeclaredProperty("bar", type, null); 
-     assertEquals("{bar: {...}, foo: number}", type.toString()); 
  }
   
 

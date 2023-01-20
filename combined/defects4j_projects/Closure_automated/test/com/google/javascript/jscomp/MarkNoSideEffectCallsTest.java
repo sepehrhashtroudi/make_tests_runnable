@@ -126,7 +126,12 @@ public class MarkNoSideEffectCallsTest extends CompilerTestCase {
       this.compiler = compiler;
     }
 
-    
+    @Override
+    public void process(Node externs, Node root) {
+      passUnderTest.process(externs, root);
+      NodeTraversal.traverse(compiler, externs, this);
+      NodeTraversal.traverse(compiler, root, this);
+    }
 
     @Override
     public void visit(NodeTraversal t, Node n, Node parent) {

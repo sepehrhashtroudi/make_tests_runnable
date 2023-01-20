@@ -58,7 +58,23 @@ public class VarCheckTest extends CompilerTestCase {
     }
     return options;
   }
-
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    if (!sanityCheck) {
+      return new CompilerPass() {
+        @Override public void process(Node externs, Node root) {
+          if (testSetupPass != null) {
+            testSetupPass.process(externs, root);
+          }
+          new VarCheck(compiler, false).process(externs, root);
+          if (!compiler.hasErrors()) {
+            new VarCheck(compiler, true).process(externs, root);
+          }
+        }
+      };
+    }
+    return new VarCheck(compiler, sanityCheck);
+  }
   
 
   @Override
@@ -67,7 +83,7 @@ public class VarCheckTest extends CompilerTestCase {
     return 1;
   }
 
-  
+
 
   
 
@@ -212,5 +228,38 @@ public class VarCheckTest extends CompilerTestCase {
     checkSynthesizedExtern("", input, expectedExtern);
   }
 
-  
+  public void checkSynthesizedExtern(
+          String extern, String input, String expectedExtern) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.setWarningLevel(
+            DiagnosticGroup.forType(VarCheck.UNDEFINED_VAR_ERROR),
+            CheckLevel.OFF);
+    compiler.init(
+            ImmutableList.of(SourceFile.fromCode("extern", extern)),
+            ImmutableList.of(SourceFile.fromCode("input", input)),
+            options);
+    compiler.parseInputs();
+    assertFalse(compiler.hasErrors());
+
+    Node externsAndJs = compiler.getRoot();
+    Node root = externsAndJs.getLastChild();
+
+    Node rootOriginal = root.cloneTree();
+    Node externs = externsAndJs.getFirstChild();
+
+    Node expected = compiler.parseTestCode(expectedExtern);
+    assertFalse(compiler.hasErrors());
+
+    (new VarCheck(compiler, sanityCheck))
+            .process(externs, root);
+    if (!sanityCheck) {
+      (new VariableTestCheck(compiler)).process(externs, root);
+    }
+
+    String externsCode = compiler.toSource(externs);
+    String expectedCode = compiler.toSource(expected);
+
+    assertEquals(expectedCode, externsCode);
+  }
 }
