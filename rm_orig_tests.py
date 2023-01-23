@@ -73,6 +73,8 @@ JAVA_PATTERNS = {
 parser = Parser()
 parser.set_language(JAVA_LANGUAGE)
 
+out_path = 'out/runnable_tests'
+
 
 # project_name = 'Csv'
 # project_name_l = 'csv/'
@@ -99,27 +101,31 @@ parser.set_language(JAVA_LANGUAGE)
 # test_path = 'src/test/org/apache/commons/cli'
 # out_path = 'out/runnable_tests/'
 
-# project_name = 'Chart'
-# project_name_l = 'chart/'
-# test_path = 'tests/org/jfree/chart'
-# out_path = 'out/runnable_tests/org/jfree'
+project_name = 'Chart'
+test_path = 'tests/org/jfree/'
+split_length = 3
 
 # project_name = 'Time'
 # project_name_l = 'time/'
 # test_path = 'src/test/java/org/joda/time'
 # out_path = 'out/runnable_tests/org/joda/'
 
-project_name = 'JacksonDatabind'
-test_path = 'src/test/java/com/fasterxml/jackson/databind'
-out_path = 'out/runnable_tests'
-split_length = 5
+# project_name = 'JacksonDatabind'
+# test_path = 'src/test/java/com/fasterxml/jackson/databind'
+# out_path = 'out/runnable_tests'
+# split_length = 5
+
+# project_name = 'Compress'
+# test_path = 'src/test/java/org/apache/commons/compress'
+# out_path = 'out/runnable_tests'
+# split_length = 5
 
 # project_name = 'Gson'
 # test_path = 'gson/src/test/java/com/google/gson'
 # out_path = 'out/runnable_tests'
 
 
-add_all_tests = 0
+add_all_tests = 1
 
 no_test_flag = 0
 
@@ -262,7 +268,7 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
             full_code = '\n'.join(temp)
             with open(f'tmp/{curdir}/{file}', 'w') as f:
                 f.write(full_code)
-            out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf build && rm -rf build-test && rm -rf target  && defects4j compile')
+            out = os.system(f'cd tmp/defects4j_projects/{project_name} && rm -rf build && rm -rf build-tests && rm -rf target  && defects4j compile')
             if out == 0:
                 compilable_tcs.append(test_code)
             else:

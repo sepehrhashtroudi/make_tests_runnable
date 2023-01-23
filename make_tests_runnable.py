@@ -32,18 +32,18 @@ import shutil
 # out = "./generated_datasets/cli_train.tests"
 # info = "./generated_datasets/cli_train_info.txt"
 
-# out = "./model_predictions/chart/test_best-bleu.output"
-# info = "./generated_datasets/chart_test_info.txt"
-# out = "./generated_datasets/chart_train_0.tests"
-# info = "./generated_datasets/chart_train_info_0.txt"
+# out = "./model_predictions/chart_0/test_best-bleu.output"
+# info = "./generated_datasets/chart_test_info_0.txt"
+out = "./generated_datasets/chart_train_0.tests"
+info = "./generated_datasets/chart_train_info_0.txt"
 
 # out = "./model_predictions/jacksonDatabind_0/test_best-bleu.output"
 # info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
 # out = "./generated_datasets/jacksonDatabind_train_0.tests"
 # info = "./generated_datasets/jacksonDatabind_train_info_0.txt"
 
-out = "./model_predictions/jacksonDatabind_1/test_best-bleu.output"
-info = "./generated_datasets/jacksonDatabind_test_info_1.txt"
+# out = "./model_predictions/jacksonDatabind_1/test_best-bleu.output"
+# info = "./generated_datasets/jacksonDatabind_test_info_1.txt"
 # out = "./generated_datasets/jacksonDatabind_train_1.tests"
 # info = "./generated_datasets/jacksonDatabind_train_info_1.txt"
 
@@ -71,6 +71,11 @@ info = "./generated_datasets/jacksonDatabind_test_info_1.txt"
 # info = "./generated_datasets/gson_test_info_2.txt"
 # out = "./generated_datasets/gson_train_2.tests"
 # info = "./generated_datasets/gson_train_info_2.txt"
+
+# out = "./model_predictions/compress_3/test_best-bleu.output"
+# info = "./generated_datasets/compress_test_info_3.txt"
+# out = "./generated_datasets/compress_train_3.tests"
+# info = "./generated_datasets/compress_train_info_3.txt"
 
 # out = "concat.tests"
 # info = "concat_info.txt"
