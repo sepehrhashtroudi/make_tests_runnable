@@ -101,9 +101,9 @@ out_path = 'out/runnable_tests'
 # test_path = 'src/test/org/apache/commons/cli'
 # out_path = 'out/runnable_tests/'
 
-project_name = 'Chart'
-test_path = 'tests/org/jfree/'
-split_length = 3
+# project_name = 'Chart'
+# test_path = 'tests/org/jfree/'
+# split_length = 3
 
 # project_name = 'Time'
 # project_name_l = 'time/'
@@ -115,10 +115,10 @@ split_length = 3
 # out_path = 'out/runnable_tests'
 # split_length = 5
 
-# project_name = 'Compress'
-# test_path = 'src/test/java/org/apache/commons/compress'
-# out_path = 'out/runnable_tests'
-# split_length = 5
+project_name = 'Compress'
+test_path = 'src/test/java/org/apache/commons/compress'
+out_path = 'out/runnable_tests'
+split_length = 5
 
 # project_name = 'Gson'
 # test_path = 'gson/src/test/java/com/google/gson'

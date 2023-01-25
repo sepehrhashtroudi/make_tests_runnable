@@ -34,8 +34,8 @@ import shutil
 
 # out = "./model_predictions/chart_0/test_best-bleu.output"
 # info = "./generated_datasets/chart_test_info_0.txt"
-out = "./generated_datasets/chart_train_0.tests"
-info = "./generated_datasets/chart_train_info_0.txt"
+# out = "./generated_datasets/chart_train_0.tests"
+# info = "./generated_datasets/chart_train_info_0.txt"
 
 # out = "./model_predictions/jacksonDatabind_0/test_best-bleu.output"
 # info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
@@ -76,6 +76,31 @@ info = "./generated_datasets/chart_train_info_0.txt"
 # info = "./generated_datasets/compress_test_info_3.txt"
 # out = "./generated_datasets/compress_train_3.tests"
 # info = "./generated_datasets/compress_train_info_3.txt"
+
+# out = "./model_predictions/compress_test_0/prediction/test_best-bleu.output"
+# info = "./generated_datasets/compress_test_info_0.txt"
+# out = "./generated_datasets/compress_train_0.tests"
+# info = "./generated_datasets/compress_train_info_0.txt"
+
+# out = "./model_predictions/compress_test_1/prediction/test_best-bleu.output"
+# info = "./generated_datasets/compress_test_info_1.txt"
+# out = "./generated_datasets/compress_train_1.tests"
+# info = "./generated_datasets/compress_train_info_1.txt"
+
+# out = "./model_predictions/compress_test_2/prediction/test_best-bleu.output"
+# info = "./generated_datasets/compress_test_info_2.txt"
+# out = "./generated_datasets/compress_train_2.tests"
+# info = "./generated_datasets/compress_train_info_2.txt"
+
+# out = "./model_predictions/compress_test_3/prediction/test_best-bleu.output"
+# info = "./generated_datasets/compress_test_info_3.txt"
+# out = "./generated_datasets/compress_train_3.tests"
+# info = "./generated_datasets/compress_train_info_3.txt"
+
+# out = "./model_predictions/compress_test_4/prediction/test_best-bleu.output"
+# info = "./generated_datasets/compress_test_info_4.txt"
+# out = "./generated_datasets/compress_train_4.tests"
+# info = "./generated_datasets/compress_train_info_4.txt"
 
 # out = "concat.tests"
 # info = "concat_info.txt"
