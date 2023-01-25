@@ -101,9 +101,9 @@ out_path = 'out/runnable_tests'
 # test_path = 'src/test/org/apache/commons/cli'
 # out_path = 'out/runnable_tests/'
 
-project_name = 'Chart'
-test_path = 'tests/org/jfree/'
-split_length = 3
+# project_name = 'Chart'
+# test_path = 'tests/org/jfree/'
+# split_length = 3
 
 # project_name = 'Time'
 # project_name_l = 'time/'
@@ -115,6 +115,11 @@ split_length = 3
 # out_path = 'out/runnable_tests'
 # split_length = 5
 
+project_name = 'JacksonCore'
+test_path = 'src/test/java/com/fasterxml/jackson'
+out_path = 'out/runnable_tests'
+split_length = 5
+
 # project_name = 'Compress'
 # test_path = 'src/test/java/org/apache/commons/compress'
 # out_path = 'out/runnable_tests'
@@ -125,7 +130,7 @@ split_length = 3
 # out_path = 'out/runnable_tests'
 
 
-add_all_tests = 1
+add_all_tests = 0
 
 no_test_flag = 0
 
@@ -259,7 +264,8 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
         # make new tmp dir for compilation check
         if os.path.exists('tmp/'):
             shutil.rmtree('tmp/', ignore_errors=True)
-        os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}')
+        os.makedirs(f'tmp/defects4j_projects/{project_name}/', exist_ok=True)
+        os.system(f'defects4j checkout -p {project_name} -v 1f -w tmp/defects4j_projects/{project_name}/')
         # check parsable TCs if they are compilable
         compilable_tcs = []
         for i, test_code in enumerate(parsable_tcs):
@@ -275,7 +281,7 @@ def get_correct_tcs(gen_tests, after_rm, inject_point, curdir, file):
                 os.makedirs(f'out/compilation_errors/{curdir}/', exist_ok=True)
                 with open(f'out/compilation_errors/{curdir}/{file}_{i}.java', 'w') as error_f:
                     error_f.write(test_code)
-                with open(f'tmp/{curdir}/{file}', 'w') as f:
+                with open(f'./tmp/{curdir}/{file}', 'w') as f:
                     f.write('\n'.join(after_rm))
                 not_compilable_tcs += 1
         shutil.rmtree("tmp/", ignore_errors=True)
