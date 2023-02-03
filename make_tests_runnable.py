@@ -6,44 +6,56 @@ import shutil
 # info = "./generated_datasets/lang3_test_info.txt"
 # out = "./model_predictions/lang/test_best-bleu.output"
 # info = "./generated_datasets/lang3_test_info.txt"
+# out = "./model_predictions/lang_nopt/test_best-bleu.output"
+# info = "./generated_datasets/lang3_test_info.txt"
 
 # out = "./generated_datasets/time_train.tests"
 # info = "./generated_datasets/time_train_info.txt"
 # out = "./model_predictions/time/test_best-bleu.output"
 # info = "./generated_datasets/time_test_info.txt"
+# out = "./model_predictions/time_nopt/test_best-bleu.output"
+# info = "./generated_datasets/time_test_info.txt"
+
 
 # out = "./model_predictions/closure/test_best-bleu.output"
 # info = "./generated_datasets/closure_test_info.txt"
 # out = "./generated_datasets/closure_train.tests"
 # info = "./generated_datasets/closure_train_info.txt"
+# out = "./model_predictions/closure_nopt/test_best-bleu.output"
+# info = "./generated_datasets/closure_test_info.txt"
 
 # out = "./model_predictions/csv/test_best-bleu.output"
 # info = "./generated_datasets/csv_test_info.txt"
 # out = "./generated_datasets/csv_train.tests"
 # info = "./generated_datasets/csv_train_info.txt"
+# out = "./model_predictions/csv_nopt/test_best-bleu.output"
+# info = "./generated_datasets/csv_test_info.txt"
 
 # out = "./model_predictions/codec/test_best-bleu.output"
 # info = "./generated_datasets/codec_test_info.txt"
 # out = "./generated_datasets/codec_train.tests"
 # info = "./generated_datasets/codec_train_info.txt"
+# out = "./model_predictions/codec_nopt/test_best-bleu.output"
+# info = "./generated_datasets/codec_test_info.txt"
 
 # out = "./model_predictions/cli/test_best-bleu.output"
 # info = "./generated_datasets/cli_test_info.txt"
 # out = "./generated_datasets/cli_train.tests"
 # info = "./generated_datasets/cli_train_info.txt"
+# out = "./model_predictions/cli_nopt/test_best-bleu.output"
+# info = "./generated_datasets/cli_test_info.txt"
 
 # out = "./model_predictions/chart_0/test_best-bleu.output"
 # info = "./generated_datasets/chart_test_info_0.txt"
 # out = "./generated_datasets/chart_train_0.tests"
 # info = "./generated_datasets/chart_train_info_0.txt"
-<<<<<<< HEAD
+out = "./model_predictions/chart_nopt_0/test_best-bleu.output"
+info = "./generated_datasets/chart_test_info_0.txt"
 
 # out = "./model_predictions/chart_1/test_best-bleu.output"
 # info = "./generated_datasets/chart_test_info_1.txt"
 # out = "./generated_datasets/chart_train_1.tests"
 # info = "./generated_datasets/chart_train_info_1.txt"
-=======
->>>>>>> 28d00ec3b040717e6415ffc16effa89bc5f1a5af
 
 # out = "./model_predictions/jacksonDatabind_0/test_best-bleu.output"
 # info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
@@ -90,7 +102,6 @@ import shutil
 # out = "./generated_datasets/compress_train_3.tests"
 # info = "./generated_datasets/compress_train_info_3.txt"
 
-<<<<<<< HEAD
 # out = "./model_predictions/jacksonCore_test_0/prediction/test_best-bleu.output"
 # info = "./generated_datasets/jacksonCore_test_info_0.txt"
 # out = "./generated_datasets/jacksonCore_train_0.tests"
@@ -98,49 +109,23 @@ import shutil
 
 # out = "./model_predictions/jacksonCore_test_1/prediction/test_best-bleu.output"
 # info = "./generated_datasets/jacksonCore_test_info_1.txt"
-# # out = "./generated_datasets/jacksonCore_train_1.tests"
+# out = "./generated_datasets/jacksonCore_train_1.tests"
 # info = "./generated_datasets/jacksonCore_train_info_1.txt"
 
 # out = "./model_predictions/jacksonCore_test_2/prediction/test_best-bleu.output"
 # info = "./generated_datasets/jacksonCore_test_info_2.txt"
-# # out = "./generated_datasets/jacksonCore_train_2.tests"
+# out = "./generated_datasets/jacksonCore_train_2.tests"
 # info = "./generated_datasets/jacksonCore_train_info_2.txt"
 
 # out = "./model_predictions/jacksonCore_test_3/prediction/test_best-bleu.output"
 # info = "./generated_datasets/jacksonCore_test_info_3.txt"
-# # out = "./generated_datasets/jacksonCore_train_3.tests"
+# out = "./generated_datasets/jacksonCore_train_3.tests"
 # info = "./generated_datasets/jacksonCore_train_info_3.txt"
 
-out = "./model_predictions/jacksonCore_test_4/prediction/test_best-bleu.output"
-info = "./generated_datasets/jacksonCore_test_info_4.txt"
-# # out = "./generated_datasets/jacksonCore_train_4.tests"
+# out = "./model_predictions/jacksonCore_test_4/prediction/test_best-bleu.output"
+# info = "./generated_datasets/jacksonCore_test_info_4.txt"
+# out = "./generated_datasets/jacksonCore_train_4.tests"
 # info = "./generated_datasets/jacksonCore_train_info_4.txt"
-=======
-# out = "./model_predictions/compress_test_0/prediction/test_best-bleu.output"
-# info = "./generated_datasets/compress_test_info_0.txt"
-# out = "./generated_datasets/compress_train_0.tests"
-# info = "./generated_datasets/compress_train_info_0.txt"
-
-# out = "./model_predictions/compress_test_1/prediction/test_best-bleu.output"
-# info = "./generated_datasets/compress_test_info_1.txt"
-# out = "./generated_datasets/compress_train_1.tests"
-# info = "./generated_datasets/compress_train_info_1.txt"
-
-# out = "./model_predictions/compress_test_2/prediction/test_best-bleu.output"
-# info = "./generated_datasets/compress_test_info_2.txt"
-# out = "./generated_datasets/compress_train_2.tests"
-# info = "./generated_datasets/compress_train_info_2.txt"
-
-# out = "./model_predictions/compress_test_3/prediction/test_best-bleu.output"
-# info = "./generated_datasets/compress_test_info_3.txt"
-# out = "./generated_datasets/compress_train_3.tests"
-# info = "./generated_datasets/compress_train_info_3.txt"
-
-# out = "./model_predictions/compress_test_4/prediction/test_best-bleu.output"
-# info = "./generated_datasets/compress_test_info_4.txt"
-# out = "./generated_datasets/compress_train_4.tests"
-# info = "./generated_datasets/compress_train_info_4.txt"
->>>>>>> 28d00ec3b040717e6415ffc16effa89bc5f1a5af
 
 # out = "concat.tests"
 # info = "concat_info.txt"

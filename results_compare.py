@@ -6,11 +6,11 @@ import json
 if os.path.exists("lines_covered_evosuite.txt"):
    os.remove("lines_covered_evosuite.txt")
 
-f = open("./generated_datasets/chart_test_info_0.txt")
+f = open("./generated_datasets/closure_test_info.txt")
 test_info = f.readlines()
 f.close()
 
-tree = ET.parse('model_gen_coverage/chart_evo.xml')
+tree = ET.parse('model_gen_coverage/closure_nopt.xml')
 root = tree.getroot()
 line_coverage_train = {}
 for package in root[0].findall('package'):
@@ -40,9 +40,9 @@ for package in root[0].findall('package'):
                 print("type: " + line.get("type"))
         # print(lines)
         if len(lines) > 0:
-            line_coverage_train["/".join(file.get("path").split('/')[7:])] = lines
+            line_coverage_train["/".join(file.get("path").split('/')[8:])] = lines
 
-tree = ET.parse('model_gen_coverage/chart_automated_0.xml')
+tree = ET.parse('model_gen_coverage/closure_empty.xml')
 root = tree.getroot()
 line_coverage_test = {}
 for package in root[0].findall('package'):

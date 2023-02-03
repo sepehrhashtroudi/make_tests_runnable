@@ -77,48 +77,45 @@ out_path = 'out/runnable_tests'
 
 
 # project_name = 'Csv'
-# project_name_l = 'csv/'
 # test_path = 'src/test/java/org/apache/commons/csv'
-# out_path = 'out/runnable_tests/org/apache/commons/'
+# split_length = 5
 
 # project_name = 'Lang'
-# project_name_l = 'lang3/'
 # test_path = 'src/test/java/org/apache/commons/lang3'
-# out_path = 'out/runnable_tests/org/apache/commons/'
+# split_length = 5
 
 # project_name = 'Closure'
-# project_name_l = 'google/'
 # test_path = 'test/com/google'
-# out_path = 'out/runnable_tests/com/'
-
-# project_name = 'Codec'
-# project_name_l = 'codec/'
-# test_path = 'src/test/org/apache/commons/codec'
-# out_path = 'out/runnable_tests/org/apache/commons/'
-
-# project_name = 'Cli'
-# project_name_l = 'cli/'
-# test_path = 'src/test/org/apache/commons/cli'
-# out_path = 'out/runnable_tests/'
-
-# project_name = 'Chart'
-# test_path = 'tests/org/jfree/'
 # split_length = 3
 
+# project_name = 'Codec'
+# split_length = 4
+# test_path = 'src/test/org/apache/commons/codec'
+
+
+# project_name = 'Cli'
+# test_path = 'src/test/org/apache/commons/cli'
+# split_length = 7
+
+
+project_name = 'Chart'
+test_path = 'tests/org/jfree/'
+split_length = 3
+
 # project_name = 'Time'
-# project_name_l = 'time/'
 # test_path = 'src/test/java/org/joda/time'
-# out_path = 'out/runnable_tests/org/joda/'
+# split_length = 5
+
 
 # project_name = 'JacksonDatabind'
 # test_path = 'src/test/java/com/fasterxml/jackson/databind'
 # out_path = 'out/runnable_tests'
 # split_length = 5
 
-project_name = 'JacksonCore'
-test_path = 'src/test/java/com/fasterxml/jackson'
-out_path = 'out/runnable_tests'
-split_length = 5
+# project_name = 'JacksonCore'
+# test_path = 'src/test/java/com/fasterxml/jackson'
+# out_path = 'out/runnable_tests'
+# split_length = 5
 
 # project_name = 'Compress'
 # test_path = 'src/test/java/org/apache/commons/compress'
