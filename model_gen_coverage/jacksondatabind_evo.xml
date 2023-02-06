@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1673851713607" clover="4.4.1">
-   <project timestamp="1673851706130">
+<coverage generated="1675644574901" clover="4.4.1">
+   <project timestamp="1675644567386">
       <metrics coveredelements="1510" complexity="9407" loc="74913" methods="4471" classes="507" statements="17685" packages="20" coveredconditionals="390" coveredmethods="263" elements="30356" ncloc="42929" files="331" conditionals="8200" coveredstatements="857"/>
       <package name="com.fasterxml.jackson.databind.introspect">
          <metrics coveredelements="71" complexity="1148" loc="7353" methods="497" classes="30" statements="2066" coveredconditionals="23" coveredmethods="11" elements="3715" ncloc="4694" files="23" conditionals="1152" coveredstatements="37"/>
@@ -28833,7 +28833,7 @@
          </file>
       </package>
    </project>
-   <testproject timestamp="1673851706130">
+   <testproject timestamp="1675644567386">
       <metrics coveredelements="0" complexity="0" loc="0" methods="0" classes="0" statements="0" packages="0" coveredconditionals="0" coveredmethods="0" elements="0" ncloc="0" files="0" conditionals="0" coveredstatements="0"/>
    </testproject>
 </coverage>

@@ -98,19 +98,19 @@ out_path = 'out/runnable_tests'
 # split_length = 7
 
 
-project_name = 'Chart'
-test_path = 'tests/org/jfree/'
-split_length = 3
+# project_name = 'Chart'
+# test_path = 'tests/org/jfree/'
+# split_length = 3
 
 # project_name = 'Time'
 # test_path = 'src/test/java/org/joda/time'
 # split_length = 5
 
 
-# project_name = 'JacksonDatabind'
-# test_path = 'src/test/java/com/fasterxml/jackson/databind'
-# out_path = 'out/runnable_tests'
-# split_length = 5
+project_name = 'JacksonDatabind'
+test_path = 'src/test/java/com/fasterxml/jackson/databind'
+out_path = 'out/runnable_tests'
+split_length = 5
 
 # project_name = 'JacksonCore'
 # test_path = 'src/test/java/com/fasterxml/jackson'
