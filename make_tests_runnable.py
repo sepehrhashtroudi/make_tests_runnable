@@ -61,8 +61,8 @@ import shutil
 # info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
 # out = "./generated_datasets/jacksonDatabind_train_0.tests"
 # info = "./generated_datasets/jacksonDatabind_train_info_0.txt"
-out = "./model_predictions/jacksonDatabind_nopt_0/test_best-bleu.output"
-info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
+# out = "./model_predictions/jacksonDatabind_nopt_0/test_best-bleu.output"
+# info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
 
 # out = "./model_predictions/jacksonDatabind_1/test_best-bleu.output"
 # info = "./generated_datasets/jacksonDatabind_test_info_1.txt"
@@ -126,6 +126,12 @@ info = "./generated_datasets/jacksonDatabind_test_info_0.txt"
 
 # out = "./model_predictions/jacksonCore_test_4/prediction/test_best-bleu.output"
 # info = "./generated_datasets/jacksonCore_test_info_4.txt"
+# out = "./generated_datasets/jacksonCore_train_4.tests"
+# info = "./generated_datasets/jacksonCore_train_info_4.txt"
+
+
+out = "./model_predictions/jsoup_test_4/prediction/test_best-bleu.output"
+info = "./generated_datasets/jsoup_test_info_4.txt"
 # out = "./generated_datasets/jacksonCore_train_4.tests"
 # info = "./generated_datasets/jacksonCore_train_info_4.txt"
 

@@ -107,8 +107,14 @@ out_path = 'out/runnable_tests'
 # split_length = 5
 
 
-project_name = 'JacksonDatabind'
-test_path = 'src/test/java/com/fasterxml/jackson/databind'
+# project_name = 'JacksonDatabind'
+# test_path = 'src/test/java/com/fasterxml/jackson/databind'
+# out_path = 'out/runnable_tests'
+# split_length = 5
+
+
+project_name = 'Jsoup'
+test_path = 'src/test/java/org/jsoup'
 out_path = 'out/runnable_tests'
 split_length = 5
 
