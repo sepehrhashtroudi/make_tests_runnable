@@ -113,10 +113,15 @@ out_path = 'out/runnable_tests'
 # split_length = 5
 
 
-project_name = 'Jsoup'
-test_path = 'src/test/java/org/jsoup'
-out_path = 'out/runnable_tests'
-split_length = 5
+# project_name = 'Jsoup'
+# test_path = 'src/test/java/org/jsoup'
+# out_path = 'out/runnable_tests'
+# split_length = 5
+
+# project_name = 'JxPath'
+# test_path = 'src/test/org/apache/commons/jxpath'
+# out_path = 'out/runnable_tests'
+# split_length = 4
 
 # project_name = 'JacksonCore'
 # test_path = 'src/test/java/com/fasterxml/jackson'
@@ -128,9 +133,10 @@ split_length = 5
 # out_path = 'out/runnable_tests'
 # split_length = 5
 
-# project_name = 'Gson'
-# test_path = 'gson/src/test/java/com/google/gson'
-# out_path = 'out/runnable_tests'
+project_name = 'Gson'
+test_path = 'gson/src/test/java/com/google/gson'
+out_path = 'out/runnable_tests'
+split_length = 6
 
 
 add_all_tests = 0
@@ -162,16 +168,18 @@ def rm_orig_tests(code):
     for cp in mark_ann_captures:
         if get_blob(code, cp[0]) == 'Test':
             test_annotated.append(cp[0].parent.parent.parent)
+            # print("1")
     for cp in ann_captures:
         if get_blob(code, cp[0]) == 'Test':
             test_annotated.append(cp[0].parent.parent.parent)
+            # print("2")
 
     # if nothing is annotated with @Test, check for methods with 'test'.
     if len(test_annotated) == 0:
         no_test_flag = 1
         q = JAVA_LANGUAGE.query(JAVA_PATTERNS['METHOD_TYPE'])
         c = q.captures(root_node)
-        
+        # print("3")
 
         for i,cp in enumerate(c):
             if(i%4==0):

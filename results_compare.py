@@ -6,11 +6,11 @@ import json
 if os.path.exists("lines_covered_evosuite.txt"):
    os.remove("lines_covered_evosuite.txt")
 
-f = open("./generated_datasets/compress_test_info_4.txt")
+f = open("./generated_datasets/jxPath_test_info_4.txt")
 test_info = f.readlines()
 f.close()
 
-tree = ET.parse('model_gen_coverage/compress_evo.xml')
+tree = ET.parse('model_gen_coverage/jxpath_train_4.xml')
 root = tree.getroot()
 line_coverage_train = {}
 for package in root[0].findall('package'):
@@ -40,9 +40,9 @@ for package in root[0].findall('package'):
                 print("type: " + line.get("type"))
         # print(lines)
         if len(lines) > 0:
-            line_coverage_train["/".join(file.get("path").split('/')[10:])] = lines
+            line_coverage_train["/".join(file.get("path").split('/')[9:])] = lines
 
-tree = ET.parse('model_gen_coverage/compress_automated_4.xml')
+tree = ET.parse('model_gen_coverage/jxpath_4.xml')
 root = tree.getroot()
 line_coverage_test = {}
 for package in root[0].findall('package'):
@@ -72,7 +72,7 @@ for package in root[0].findall('package'):
                 print("type: " + line.get("type"))
         # print(lines)
         if len(lines) > 0:
-            line_coverage_test["/".join(file.get("path").split('/')[10:])] = lines
+            line_coverage_test["/".join(file.get("path").split('/')[9:])] = lines
 
 test_line_num = 0
 common_covered_lines = 0

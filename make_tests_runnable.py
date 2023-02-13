@@ -94,8 +94,8 @@ import shutil
 # info = "./generated_datasets/cli_train_info.txt"
 
 
-# out = "./model_predictions/gson_2/test_best-bleu.output"
-# info = "./generated_datasets/gson_test_info_2.txt"
+out = "./model_predictions/gson_test_0/prediction/test_best-bleu.output"
+info = "./generated_datasets/gson_test_info_0.txt"
 # out = "./generated_datasets/gson_train_2.tests"
 # info = "./generated_datasets/gson_train_info_2.txt"
 
@@ -130,10 +130,20 @@ import shutil
 # info = "./generated_datasets/jacksonCore_train_info_4.txt"
 
 
-out = "./model_predictions/jsoup_test_4/prediction/test_best-bleu.output"
-info = "./generated_datasets/jsoup_test_info_4.txt"
-# out = "./generated_datasets/jacksonCore_train_4.tests"
-# info = "./generated_datasets/jacksonCore_train_info_4.txt"
+# out = "./model_predictions/jsoup_test_4/prediction/test_best-bleu.output"
+# info = "./generated_datasets/jsoup_test_info_4.txt"
+# out = "./generated_datasets/jsoup_train_4.tests"
+# info = "./generated_datasets/jsoup_train_info_4.txt"
+# out = "./model_predictions/jsoup_test_nopt_0/test_best-bleu.output"
+# info = "./generated_datasets/jsoup_test_info_0.txt"
+
+
+# out = "./model_predictions/jxPath_test_4/prediction/test_best-bleu.output"
+# info = "./generated_datasets/jxPath_test_info_4.txt"
+# out = "./generated_datasets/jxPath_train_4.tests"
+# info = "./generated_datasets/jxPath_train_info_4.txt"
+# out = "./model_predictions/jsoup_test_nopt_0/test_best-bleu.output"
+# info = "./generated_datasets/jsoup_test_info_0.txt"
 
 # out = "concat.tests"
 # info = "concat_info.txt"
