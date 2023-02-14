@@ -92,11 +92,9 @@ out_path = 'out/runnable_tests'
 # split_length = 4
 # test_path = 'src/test/org/apache/commons/codec'
 
-
 # project_name = 'Cli'
 # test_path = 'src/test/org/apache/commons/cli'
 # split_length = 7
-
 
 # project_name = 'Chart'
 # test_path = 'tests/org/jfree/'
@@ -106,12 +104,10 @@ out_path = 'out/runnable_tests'
 # test_path = 'src/test/java/org/joda/time'
 # split_length = 5
 
-
 # project_name = 'JacksonDatabind'
 # test_path = 'src/test/java/com/fasterxml/jackson/databind'
 # out_path = 'out/runnable_tests'
 # split_length = 5
-
 
 # project_name = 'Jsoup'
 # test_path = 'src/test/java/org/jsoup'

@@ -4,5 +4,5 @@ tmp/*
 out/*
 generated_datasets/*
 model_predictions/*
-
+model_predictions_2/*
 vendor/*
