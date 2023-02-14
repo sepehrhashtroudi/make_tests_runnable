@@ -16,7 +16,6 @@ import shutil
 # out = "./model_predictions/time_nopt/test_best-bleu.output"
 # info = "./generated_datasets/time_test_info.txt"
 
-
 # out = "./model_predictions/closure/test_best-bleu.output"
 # info = "./generated_datasets/closure_test_info.txt"
 # out = "./generated_datasets/closure_train.tests"
