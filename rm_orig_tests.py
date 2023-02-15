@@ -80,9 +80,9 @@ out_path = 'out/runnable_tests'
 # test_path = 'src/test/java/org/apache/commons/csv'
 # split_length = 5
 
-# project_name = 'Lang'
-# test_path = 'src/test/java/org/apache/commons/lang3'
-# split_length = 5
+project_name = 'Lang'
+test_path = 'src/test/java/org/apache/commons/lang3'
+split_length = 5
 
 # project_name = 'Closure'
 # test_path = 'test/com/google'
@@ -129,10 +129,10 @@ out_path = 'out/runnable_tests'
 # out_path = 'out/runnable_tests'
 # split_length = 5
 
-project_name = 'Gson'
-test_path = 'gson/src/test/java/com/google/gson'
-out_path = 'out/runnable_tests'
-split_length = 6
+# project_name = 'Gson'
+# test_path = 'gson/src/test/java/com/google/gson'
+# out_path = 'out/runnable_tests'
+# split_length = 6
 
 
 add_all_tests = 0

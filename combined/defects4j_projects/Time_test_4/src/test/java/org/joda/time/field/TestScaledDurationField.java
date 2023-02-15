@@ -1,0 +1,172 @@
+/*
+ *  Copyright 2001-2009 Stephen Colebourne
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.joda.time.field;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.joda.time.DurationField;
+import org.joda.time.DurationFieldType;
+import org.joda.time.chrono.ISOChronology;
+
+/**
+ * This class is a Junit unit test for PreciseDurationField.
+ *
+ * @author Stephen Colebourne
+ */
+public class TestScaledDurationField extends TestCase {
+    
+    private static final long LONG_INTEGER_MAX = Integer.MAX_VALUE;
+    private static final int INTEGER_MAX = Integer.MAX_VALUE;
+    private static final long LONG_MAX = Long.MAX_VALUE;
+    
+    private ScaledDurationField iField;
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestScaledDurationField.class);
+    }
+
+    public TestScaledDurationField(String name) {
+        super(name);
+    }
+
+    protected void setUp() throws Exception {
+        DurationField base = MillisDurationField.INSTANCE;
+        iField = new ScaledDurationField(base, DurationFieldType.minutes(), 90);
+    }
+
+    protected void tearDown() throws Exception {
+        iField = null;
+    }
+
+    //-----------------------------------------------------------------------
+public void test_compareTo121() { 
+     assertEquals(0, iField.compareTo(iField)); 
+     assertEquals(-1, iField.compareTo(ISOChronology.getInstance().minutes())); 
+     DurationField dummy = new PreciseDurationField(DurationFieldType.minutes(), 0); 
+     assertEquals(1, iField.compareTo(dummy)); 
+     try { 
+         iField.compareTo(null); 
+         fail(); 
+     } catch (NullPointerException ex) { 
+     } 
+ }
+public void test_getMillis_int122() { 
+     assertEquals(0L, iField.getMillis(0)); 
+     assertEquals(1234L * 90L, iField.getMillis(1234)); 
+     assertEquals(-1234L * 90L, iField.getMillis(-1234)); 
+     try { 
+         iField.getMillis(999999); 
+         fail(); 
+     } catch (ArithmeticException ex) { 
+     } 
+ }
+public void test_getMillis_int123() { 
+     assertEquals(0L, iField.getMillis(0)); 
+     assertEquals(1234L * 90L, iField.getMillis(1234)); 
+     assertEquals(-1234L * 90L, iField.getMillis(-1234)); 
+     try { 
+         iField.getMillis(LONG_MAX); 
+         fail(); 
+     } catch (ArithmeticException ex) { 
+     } 
+ }
+public void test_getMillis_int_long124() { 
+     assertEquals(0L, iField.getMillis(0, 567L)); 
+     assertEquals(1234L * 90L, iField.getMillis(1234, 567L)); 
+     assertEquals(-1234L * 90L, iField.getMillis(-1234, 567L)); 
+     try { 
+         iField.getMillis(LONG_MAX, 567L); 
+         fail(); 
+     } catch (ArithmeticException ex) { 
+     } 
+ }
+public void test_hashCode125() { 
+     assertEquals(true, iField.hashCode() == iField.hashCode()); 
+     assertEquals(false, iField.hashCode() == ISOChronology.getInstance().minutes().hashCode()); 
+     DurationField dummy = new PreciseDurationField(DurationFieldType.minutes(), 0); 
+     assertEquals(false, iField.hashCode() == dummy.hashCode()); 
+     dummy = new PreciseDurationField(DurationFieldType.minutes(), 90); 
+     assertEquals(true, iField.hashCode() == dummy.hashCode()); 
+     dummy = new PreciseDurationField(DurationFieldType.millis(), 90); 
+     assertEquals(false, iField.hashCode() == dummy.hashCode()); 
+ }
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+}

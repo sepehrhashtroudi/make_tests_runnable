@@ -1,0 +1,316 @@
+/*
+ *  Copyright 2001-2009 Stephen Colebourne
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.joda.time;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.joda.time.base.AbstractDuration;
+import org.joda.time.base.BaseDuration;
+import org.joda.time.chrono.ISOChronology;
+
+/**
+ * This class is a Junit unit test for Duration.
+ *
+ * @author Stephen Colebourne
+ */
+public class TestDuration_Basics extends TestCase {
+    // Test in 2002/03 as time zones are more well known
+    // (before the late 90's they were all over the place)
+
+    private static final DateTimeZone LONDON = DateTimeZone.forID("Europe/London");
+    
+    long y2002days = 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 
+                     366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 
+                     365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 +
+                     366 + 365;
+    long y2003days = 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 
+                     366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 
+                     365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 +
+                     366 + 365 + 365;
+    
+    // 2002-06-09
+    private long TEST_TIME_NOW =
+            (y2002days + 31L + 28L + 31L + 30L + 31L + 9L -1L) * DateTimeConstants.MILLIS_PER_DAY;
+            
+    // 2002-04-05
+    private long TEST_TIME1 =
+            (y2002days + 31L + 28L + 31L + 5L -1L) * DateTimeConstants.MILLIS_PER_DAY
+            + 12L * DateTimeConstants.MILLIS_PER_HOUR
+            + 24L * DateTimeConstants.MILLIS_PER_MINUTE;
+        
+    // 2003-05-06
+    private long TEST_TIME2 =
+            (y2003days + 31L + 28L + 31L + 30L + 6L -1L) * DateTimeConstants.MILLIS_PER_DAY
+            + 14L * DateTimeConstants.MILLIS_PER_HOUR
+            + 28L * DateTimeConstants.MILLIS_PER_MINUTE;
+    
+    private DateTimeZone originalDateTimeZone = null;
+    private TimeZone originalTimeZone = null;
+    private Locale originalLocale = null;
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestDuration_Basics.class);
+    }
+
+    public TestDuration_Basics(String name) {
+        super(name);
+    }
+
+    protected void setUp() throws Exception {
+        DateTimeUtils.setCurrentMillisFixed(TEST_TIME_NOW);
+        originalDateTimeZone = DateTimeZone.getDefault();
+        originalTimeZone = TimeZone.getDefault();
+        originalLocale = Locale.getDefault();
+        DateTimeZone.setDefault(LONDON);
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/London"));
+        Locale.setDefault(Locale.UK);
+    }
+
+    protected void tearDown() throws Exception {
+        DateTimeUtils.setCurrentMillisSystem();
+        DateTimeZone.setDefault(originalDateTimeZone);
+        TimeZone.setDefault(originalTimeZone);
+        Locale.setDefault(originalLocale);
+        originalDateTimeZone = null;
+        originalTimeZone = null;
+        originalLocale = null;
+    }
+
+    //-----------------------------------------------------------------------
+public void testMinus_RD387() { 
+     Duration test = new Duration(123L); 
+     Duration result = test.minus(null); 
+     assertSame(test, result); 
+ }
+public void testDividedBy_long188() { 
+     Duration test = new Duration(246L); 
+     Duration result = test.dividedBy(2L); 
+     assertEquals(123L, result.getMillis()); 
+ }
+public void testToPeriodFrom273() { 
+     long length = (4L + (3L * 7L) + (2L * 30L) + 365L) * DateTimeConstants.MILLIS_PER_DAY + 5L * DateTimeConstants.MILLIS_PER_HOUR + 6L * DateTimeConstants.MILLIS_PER_MINUTE + 7L * DateTimeConstants.MILLIS_PER_SECOND + 8L; 
+     Duration test = new Duration(length); 
+     DateTime dt = new DateTime(2004, 6, 9, 0, 0, 0, 0); 
+     Period result = test.toPeriodFrom(dt); 
+     assertEquals(new Period(dt, test), result); 
+ }
+public void testEqualsHashCode598() { 
+     Duration test1 = new Duration(123L); 
+     Duration test2 = new Duration(123L); 
+     assertEquals(true, test1.equals(test2)); 
+     assertEquals(true, test2.equals(test1)); 
+     assertEquals(true, test1.equals(test1)); 
+     assertEquals(true, test2.equals(test2)); 
+     assertEquals(true, test1.hashCode() == test2.hashCode()); 
+     assertEquals(true, test1.hashCode() == test1.hashCode()); 
+     assertEquals(true, test2.hashCode() == test2.hashCode()); 
+     Duration test3 = new Duration(321L); 
+     assertEquals(false, test1.equals(test3)); 
+     assertEquals(false, test2.equals(test3)); 
+     assertEquals(false, test3.equals(test1)); 
+     assertEquals(false, test3.equals(test2)); 
+     assertEquals(false, test1.hashCode() == test3.hashCode()); 
+     assertEquals(false, test2.hashCode() == test3.hashCode()); 
+     assertEquals(false, test1.equals("Hello")); 
+     assertEquals(true, test1.equals(new MockDuration(123L))); 
+ }
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+    
+    class MockDuration extends AbstractDuration {
+        private final long iValue;
+        public MockDuration(long value) {
+            super();
+            iValue = value;
+        }
+        public long getMillis() {
+            return iValue;
+        }
+    }
+
+    
+
+    
+    
+    
+    
+    
+    
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+    
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    
+
+    
+
+    //-----------------------------------------------------------------------
+    
+
+    static class MockMutableDuration extends BaseDuration {
+        public MockMutableDuration(long duration) {
+            super(duration);
+        }
+        public void setMillis(long duration) {
+            super.setMillis(duration);
+        }
+    }
+
+}
