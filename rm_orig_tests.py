@@ -100,9 +100,9 @@ split_length = 5
 # test_path = 'tests/org/jfree/'
 # split_length = 3
 
-# project_name = 'Time'
-# test_path = 'src/test/java/org/joda/time'
-# split_length = 5
+project_name = 'Time'
+test_path = 'src/test/java/org/joda/time'
+split_length = 5
 
 # project_name = 'JacksonDatabind'
 # test_path = 'src/test/java/com/fasterxml/jackson/databind'
@@ -135,7 +135,7 @@ split_length = 5
 # split_length = 6
 
 
-add_all_tests = 0
+add_all_tests = 1
 
 no_test_flag = 0
 
