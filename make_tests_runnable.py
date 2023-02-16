@@ -6,8 +6,8 @@ import shutil
 # info = "./generated_datasets/lang3_test_info.txt"
 # out = "./model_predictions/lang/test_best-bleu.output"
 # info = "./generated_datasets/lang3_test_info.txt"
-out = "./model_predictions_2/lang3_test_0/prediction/test_best-bleu.output"
-info = "./generated_datasets/lang3_test_info_0.txt"
+out = "./model_predictions_2/lang3_test_4/prediction/test_best-bleu.output"
+info = "./generated_datasets/lang3_test_info_4.txt"
 
 # out = "./generated_datasets/time_train.tests"
 # info = "./generated_datasets/time_train_info.txt"
