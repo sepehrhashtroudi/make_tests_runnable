@@ -5,4 +5,5 @@ out/*
 generated_datasets/*
 model_predictions/*
 model_predictions_2/*
+model_predictions_3/*
 vendor/*

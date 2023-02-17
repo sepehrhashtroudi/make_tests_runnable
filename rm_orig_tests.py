@@ -80,9 +80,9 @@ out_path = 'out/runnable_tests'
 # test_path = 'src/test/java/org/apache/commons/csv'
 # split_length = 5
 
-project_name = 'Lang'
-test_path = 'src/test/java/org/apache/commons/lang3'
-split_length = 5
+# project_name = 'Lang'
+# test_path = 'src/test/java/org/apache/commons/lang3'
+# split_length = 5
 
 project_name = 'Closure'
 test_path = 'test/com/google'
