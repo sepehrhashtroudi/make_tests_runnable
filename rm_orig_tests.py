@@ -84,9 +84,9 @@ project_name = 'Lang'
 test_path = 'src/test/java/org/apache/commons/lang3'
 split_length = 5
 
-project_name = 'Closure'
-test_path = 'test/com/google'
-split_length = 3
+# project_name = 'Closure'
+# test_path = 'test/com/google'
+# split_length = 3
 
 # project_name = 'Codec'
 # split_length = 4
@@ -135,7 +135,7 @@ split_length = 3
 # split_length = 6
 
 
-add_all_tests = 0
+add_all_tests = 1
 
 no_test_flag = 0
 
